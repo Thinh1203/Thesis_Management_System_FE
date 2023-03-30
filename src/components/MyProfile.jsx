@@ -1,0 +1,51 @@
+import { Link } from "react-router-dom";
+import DropDown from "./DropDown";
+import TeacherLeftDashboard from "./TeacherLeftDashboard";
+const MyProfile = () => {
+    return (
+        <div className="flex">
+            <TeacherLeftDashboard />
+            <div className="w-screen h-screen bg-slate-200">
+                <div className=" flex justify-end mx-10 my-5">
+                    <DropDown />
+                </div>
+                <div className="my-20">
+                    <div className="border-2 rounded-xl mx-5 my-5 shadow-lg shadow-slate-400 py-4">
+                        <h4 className="mx-4 font-bold text-gray-700 text-lg">Thông tin cá nhân</h4>
+                        <span className="flex"><p className="ml-4 mr-2 font-medium text-md">Trang chủ &#62;</p>  <p className="text-md text-blue-800 font-semibold">Thông tin cá nhân</p></span>
+                    </div>
+                    <div className="w-1/2 grid grid-cols-3 mx-5 mt-10 mb-5 border-2 rounded-xl my-5 shadow-lg shadow-slate-400">
+                        <div className="py-5 px-10">
+                            <ul>
+                                <li className="font-medium text-blue-900 my-1">Tài khoản:</li>
+                                <li className="font-medium text-blue-900 my-1"> Email:</li>
+                                <li className="font-medium text-blue-900 my-1">Số điện thoại:</li>
+                                <li className="font-medium text-blue-900 my-1">Họ và tên:</li>
+                                <li className="font-medium text-blue-900 my-1"> Giới tính:</li>
+                                <li className="font-medium text-blue-900 my-1"> Địa chỉ:</li>
+                                <li className="font-medium text-blue-900 my-1"> Chức vụ:</li>
+                                <li className="font-medium text-blue-900 my-1"> Khoa:</li>
+                            </ul>
+                        </div>
+                        <div className="span-cols-2 px-5 py-5">
+                            <ul>
+                                <li className="my-1">admin</li>
+                                <li className="my-1">thinhb1910454@student.ctu.edu.vn</li>
+                                <li className="my-1">0345139122</li>
+                                <li className="my-1">Quách Huy Thịnh</li>
+                                <li className="my-1">Nam</li>
+                                <li className="my-1">Cần Thơ</li>
+                                <li className="my-1">admin</li>
+                                <li className="my-1">Công nghệ thông tin</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <Link to="/updateInformation"><button className="bg-green-700 text-white p-2 border rounded-md mx-10">Cập nhật thông tin</button></Link>
+                </div>
+
+            </div>
+        </div>
+    );
+}
+
+export default MyProfile;
