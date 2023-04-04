@@ -24,7 +24,7 @@ const MyProfile = () => {
                                 <li className="font-medium text-blue-900 my-1"> Giới tính:</li>
                                 <li className="font-medium text-blue-900 my-1"> Địa chỉ:</li>
                                 <li className="font-medium text-blue-900 my-1"> Chức vụ:</li>
-                                <li className="font-medium text-blue-900 my-1"> Khoa:</li>
+                                {/* <li className="font-medium text-blue-900 my-1"> Khoa:</li> */}
                             </ul>
                         </div>
                         <div className="span-cols-2 px-5 py-5">
@@ -36,7 +36,7 @@ const MyProfile = () => {
                                 <li className="my-1">Nam</li>
                                 <li className="my-1">Cần Thơ</li>
                                 <li className="my-1">admin</li>
-                                <li className="my-1">Công nghệ thông tin</li>
+                                {/* <li className="my-1">Công nghệ thông tin</li> */}
                             </ul>
                         </div>
                     </div>

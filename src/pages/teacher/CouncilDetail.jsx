@@ -77,24 +77,24 @@ const CouncilDetail = () => {
                             <span className="flex"><p className="ml-4 mr-2 font-medium text-md">Trang chủ &#62;</p>  <p className="text-md text-blue-800 font-semibold">Danh sách đề tài trong hội đồng</p></span>
                         </div>
                         <div className="border-2 rounded-xl mx-5 my-5 shadow-lg shadow-slate-400">
-                            <div className="grid grid-cols-8 mt-10 text-left font-semibold text-sm">
+                            <div className="grid grid-cols-9 mt-10 text-left font-semibold text-sm">
                                 <div className="mx-2 text-center">Mã đề tài</div>
-                                <div className="text-left">Tên đề tài</div>
-                                <div className="text-left px-4">Tên tiếng anh</div>
-                                <div className="text-center">Ngành</div>
+                                <div className="text-left col-span-2">Tên đề tài</div>
+                                <div className="text-left px-4 col-span-2">Tên tiếng anh</div>
+                                {/* <div className="text-center">Ngành</div> */}
                                 <div>Sinh viên thực hiện</div>
                                 <div className="text-center">Tập tin</div>
                                 <div className="text-center">Điểm</div>
-                                <div className="text-center"></div>
+                                <div className="text-left">Hành động</div>
 
                             </div>
-                            <div className="pb-2 pt-2 grid grid-cols-8 text-left font-normal text-sm ">
+                            <div className="pb-2 pt-2 grid grid-cols-9 text-left font-normal text-sm ">
                                 {topic.map((e, index) => (
                                     <React.Fragment key={e.id}>
                                         <div className="mx-2 text-center">{e.code}</div>
-                                        <div>{e.name}</div>
-                                        <div className="text-left px-4">{e.englishName}</div>
-                                        <div className="text-center">{e.major}</div>
+                                        <div className="col-span-2">{e.name}</div>
+                                        <div className="text-left px-4 col-span-2">{e.englishName}</div>
+                                        {/* <div className="text-center">{e.major}</div> */}
                                         <div>{e.author}</div>
                                         <div ><button className="flex text-blue-800 m-auto"> <FaDownload /> Tải xuống </button></div>
                                         <div className=" text-center">{!score ? (<p className="text-red-700 font-semibold">Chưa chấm điểm</p>) : (<p className="text-green-700 font-semibold">{score}</p>)}</div>

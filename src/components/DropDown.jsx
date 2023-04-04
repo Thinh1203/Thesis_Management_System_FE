@@ -14,12 +14,15 @@ const DropDown = () => {
         </svg>
       </button>
       <div className="hidden bg-white text-base z-50 list-none divide-y divide-gray-100 shadow" id="dropdown">
-        <ul  aria-labelledby="dropdown">
+        <ul aria-labelledby="dropdown">
           <li className="hover:bg-blue-800 hover:text-white text-sm text-gray-700 block px-4 py-2 font-medium">
-            <Link to="/myProfile">Thông tin cá nhân</Link> 
+            <Link to="/student/DiemI">Xin điểm i</Link>
+          </li>
+          <li className="hover:bg-blue-800 hover:text-white text-sm text-gray-700 block px-4 py-2 font-medium">
+            <Link to="/myProfile">Thông tin cá nhân</Link>
           </li>
           <li className="text-sm hover:bg-blue-800 hover:text-white text-gray-700 block px-4 py-2 font-medium">
-            <Link to="/changePassword">Đổi mật khẩu</Link> 
+            <Link to="/Student/ChangePassword">Đổi mật khẩu</Link>
           </li>
           <li className="text-sm hover:bg-blue-800 hover:text-white text-gray-700 block px-4 py-2 font-medium">
             <Link to="/logout">Đăng xuất</Link>

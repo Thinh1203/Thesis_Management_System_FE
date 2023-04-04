@@ -58,11 +58,11 @@ const CompleteTopic = () => {
                             <span className="flex"><p className="ml-4 mr-2 font-medium text-md">Trang chủ &#62;</p>  <p className="text-md text-blue-800 font-semibold">Danh sách đề tài đã hoàn thành</p></span>
                         </div>
                         <div className="border-2 rounded-xl mx-5 my-5 shadow-lg shadow-slate-400">
-                            <div className="grid grid-cols-11 mt-10 text-left font-semibold text-sm">
+                            <div className="grid grid-cols-12 mt-10 text-left font-semibold text-sm">
                                 <div className="mx-2 text-center">Mã đề tài</div>
-                                <div className="text-center">Tên đề tài</div>
-                                <div className="text-center">Tên tiếng anh</div>
-                                <div className="text-center">Ngành</div>
+                                <div className="text-left col-span-2">Tên đề tài</div>
+                                <div className="text-left col-span-2">Tên tiếng anh</div>
+                                {/* <div className="text-center">Ngành</div> */}
                                 <div>Sinh viên thực hiện</div>
                                 <div>Thời gian bắt đầu</div>
                                 <div>Thời gian kết thúc</div>
@@ -71,13 +71,13 @@ const CompleteTopic = () => {
                                 <div className="text-center">Điểm</div>
                                 <div>Kết quả</div>
                             </div>
-                            <div className="pb-2 pt-2 grid grid-cols-11 text-left font-normal text-sm ">
+                            <div className="pb-2 pt-2 grid grid-cols-12 text-left font-normal text-sm ">
                                 {topic.map((e, index) => (
                                     <React.Fragment key={e.id}>
                                         <div className="mx-2 text-center">{e.code}</div>
-                                        <div>{e.name}</div>
-                                        <div className="text-left px-4">{e.englishName}</div>
-                                        <div className="text-center">{e.major}</div>
+                                        <div className="col-span-2">{e.name}</div>
+                                        <div className="text-left col-span-2">{e.englishName}</div>
+                                        {/* <div className="text-center">{e.major}</div> */}
                                         <div>{e.author}</div>
                                         <div className="px-2">{e.startDate}</div>
                                         <div>{e.endDate}</div>
