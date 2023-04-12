@@ -1,32 +1,53 @@
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import jwt_decode from 'jwt-decode';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
+import { updateProfile } from "../api/teacherApi";
+import { checkEmail, checkPhoneNumber } from "../utils/validation";
 import TeacherLeftDashboard from "./TeacherLeftDashboard";
 import DropDown from "./DropDown";
-import { useState } from "react";
 const UpdateInformation = () => {
-    const [name, setName] = useState("Quách Huy Thịnh");
-    const [email, setEmail] = useState("thinhb1910454@student.ctu.edu.vn");
-    const [phone, setPhone] = useState("0345139122");
-    const [address, setAddress] = useState("Cần Thơ");
-    const [gender, setGender] = useState("Nam");
-    const navigate = useNavigate();
-        const handleSubmit = (e) => {
-            e.preventDefault();
-            toast.success('Cập nhật thành công!', {
-                position: "top-center",
-                autoClose: 1000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-            });
-            setTimeout(() => {
-                navigate("/myProfile");
-            }, 3000);
+    const location = useLocation();
+    const inf = location.state.user;
+    const [name, setName] = useState(inf.fullName);
+    const [email, setEmail] = useState(inf.email);
+    const [phone, setPhone] = useState(inf.numberPhone);
+    const [address, setAddress] = useState(inf.address);
+    const [gender, setGender] = useState(inf.gender);
+    const navigate = useNavigate(); 
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const phoneValid = checkPhoneNumber(phone);
+        const emailValid = checkEmail(email);
+        if(!phoneValid){
+            toast.error('Số điện thoại không hợp lệ');
+            return;
         }
+        if(!emailValid){
+            toast.error('Email không hợp lệ');
+            return;
+        }
+        const newInformation = {
+            fullName: name,
+            email: email,
+            numberPhone: phone,
+            address: address,
+            gender: gender
+        };
+        const fetchApi = async () => {
+            const token = localStorage.getItem("token");
+            const res = await updateProfile(inf.id, newInformation, token);
+            if(res.status !== 200) 
+                return toast.error('Có lỗi xảy ra');
+            toast.success('Cập nhật thông tin thành công');
+        }
+        fetchApi();
+        setTimeout(() => {
+            navigate("/myProfile");
+        }, 2000);
+    }
     return (
         <div>
             <div className="flex">
@@ -51,23 +72,23 @@ const UpdateInformation = () => {
                                 </ul>
                             </div>
                             <div className="col-span-2">
-                                <form onSubmit={handleSubmit}>
+                                <form onSubmit={handleSubmit} >
                                     <ul>
                                         <li className="my-1"><input className="w-64 border-2 border-slate-500 rounded-sm" type="text" value={email} onChange={(e) => setEmail(e.target.value)} /></li>
                                         <li className="my-2"><input className="w-64 border-2 border-slate-500 rounded-sm" type="text" value={phone} onChange={(e) => setPhone(e.target.value)} /></li>
                                         <li className="my-2"><input className="w-64 border-2 border-slate-500 rounded-sm" type="text" value={name} onChange={(e) => setName(e.target.value)} /></li>
                                         <li className="my-2"><input className="w-64 border-2 border-slate-500 rounded-sm" type="text" value={address} onChange={(e) => setAddress(e.target.value)} /></li>
                                         <li className="my-2">
-                                            <select className="border-2 border-slate-500 rounded-sm" name="" id="" value={gender} onChange={(e) => setGender(e.target.value)}>
+                                            <select className="border-2 border-slate-500 rounded-sm" value={gender} onChange={(e) => setGender(e.target.value)}>
                                                 <option value="Nam">Nam</option>
                                                 <option value="Nữ"> Nữ</option>
                                             </select>
                                         </li>
-                                    </ul>
+                                    </ul>   
                                     <button className="bg-green-700 text-white p-2 border rounded-md py-2">Cập nhật</button>
                                 </form>
                                 <ToastContainer
-                                    position="top-center"
+                                    position="top-right"
                                     autoClose={1000}
                                     hideProgressBar={false}
                                     newestOnTop={false}

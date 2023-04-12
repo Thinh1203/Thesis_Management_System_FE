@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import { AiFillHome } from "react-icons/ai";
 import { MdTopic } from "react-icons/md";
 import { FaUserAlt } from "react-icons/fa";
-
 import banner from "../assets/image/banner_cict.jpg"
 const Header = () => {
+
     return (
         <header>
             <div className="h-52 bg-cover relative" style={{ backgroundImage: `url(${banner})` }}>

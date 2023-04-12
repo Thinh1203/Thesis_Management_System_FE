@@ -1,30 +1,41 @@
 
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DropDown from "../../components/DropDown";
-import React from "react";
+import React, { useState } from "react";
 import logo from "../../assets/image/logo.png";
 import logoCit from "../../assets/image/logoCit.png";
-import { AiFillHome } from "react-icons/ai";
+import { AiFillHome, AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { changePassword } from '../../api/studentApi';
 const StudentChangePassword = () => {
     const navigate = useNavigate();
     const handleSubmit = (e) => {
         e.preventDefault();
-        toast.success('Đổi mật khẩu thành công!', {
-            position: "top-center",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-        setTimeout(() => {
-            navigate("/login");
-        }, 4000);
+        const password = {
+            oldPassword: oldPassword,
+            newPassword: newPassword,
+            confirmPassword: confirmPassword
+        };
+        changePassword(password, navigate);
     }
+
+
+
+    const [oldPassword, setOldPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+
+
+    const togglePasswordVisibility1 = () => setShowOldPassword(!showOldPassword);
+    const togglePasswordVisibility2 = () => setShowNewPassword(!showNewPassword);
+    const togglePasswordVisibility3 = () => setShowConfirmPassword(!showConfirmPassword);
+    
+
     return (
         <div className="grid grid-rows-6">
             <div className="bg-white  grid grid-cols-2">
@@ -54,14 +65,62 @@ const StudentChangePassword = () => {
                                 <label htmlFor="confirmPassword" className='my-1 ml-6'>Nhập lại mật khẩu mới</label>
                             </div>
                             <div className='col-span-3'>
-                            <input id="oldPassword" type="text" className="w-52 my-1 border-2 border-slate-500" />
-                            <input id="newPassword" type="text" className="w-52 my-1 border-2 border-slate-500" />
-                            <input id="confirmPassword" type="text" className="w-52 my-1 border-2 border-slate-500" />
+                                <div className='relative'>
+                                    <input
+                                        className="w-5/6 my-1 border-2 border-slate-500"
+                                        type={showOldPassword ? "text" : "password"}
+                                        value={oldPassword}
+                                        onChange={(e) => setOldPassword(e.target.value)}
+                                    />
+                                    {(oldPassword.length > 0)
+                                        &&
+                                        <button
+                                            className="absolute -ml-5 top-2"
+                                            type="button"
+                                            onClick={togglePasswordVisibility1}
+                                        >
+                                            {showOldPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
+                                        </button>}
+                                </div>
+                                <div className='relative'>
+                                    <input
+                                        className="w-5/6 my-1 border-2 border-slate-500"
+                                        type={showNewPassword ? "text" : "password"}
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                    />
+                                    {(newPassword.length > 0)
+                                        &&
+                                        <button
+                                            className="absolute -ml-5 top-2"
+                                            type="button"
+                                            onClick={togglePasswordVisibility2}
+                                        >
+                                            {showNewPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
+                                        </button>}
+                                </div>
+                                <div className='relative'>
+                                    <input
+                                        className="w-5/6 my-1 border-2 border-slate-500"
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                    />
+                                    {(confirmPassword.length > 0)
+                                        &&
+                                        <button
+                                            className="absolute -ml-5 top-2"
+                                            type="button"
+                                            onClick={togglePasswordVisibility3}
+                                        >
+                                            {showConfirmPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
+                                        </button>}
+                                </div>
                             </div>
                         </div>
                         <button className="bg-green-700 text-white p-2 border rounded-md ml-52 my-2"  >Đổi mật khẩu</button>
                         <ToastContainer
-                            position="top-center"
+                            position="top-right"
                             autoClose={2000}
                             hideProgressBar={false}
                             newestOnTop={false}
@@ -102,5 +161,5 @@ const StudentChangePassword = () => {
         </div>
     );
 }
- 
+
 export default StudentChangePassword;

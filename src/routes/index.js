@@ -16,11 +16,9 @@ import StudentTopicDetail from "../pages/student/StudentTopicDetail";
 import StudentGradeI from "../pages/student/StudentGradeI";
 import StudentChangePassword from "../pages/student/StudentChangePassword";
 import AdminHomePage from "../pages/admin/AdminHomePage";
-import CouncilListPage from "../pages/admin/CouncilListPage";
-
+import CouncilListPage from "../pages/admin/CouncilListPage";   
 import TeacherListPage from "../pages/admin/TeacherListPage";
 import StudentListPage from "../pages/admin/StudentListPage";
-import InstructorListPage from "../pages/admin/InstructorListPage";
 import GradeIListPage from "../pages/admin/GradeIListPage";
 import CompleteTopicPage from "../pages/admin/CompleteTopicPage";
 import ProcessingTopicPage from "../pages/admin/ProcessingTopicPage";
@@ -47,7 +45,7 @@ const routers = [
     { path:"/admin/list/council", component: CouncilListPage},
     { path:"/admin/list/teacher", component: TeacherListPage},
     { path:"/admin/list/student", component: StudentListPage},
-    { path:"/admin/list/instructor", component: InstructorListPage},
+
     { path:"/admin/list/gradeI", component: GradeIListPage},
     { path:"/admin/list/topic", component: TopicListPage},
     { path:"/admin/list/topic/complete", component: CompleteTopicPage},

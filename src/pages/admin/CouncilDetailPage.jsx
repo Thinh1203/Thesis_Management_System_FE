@@ -92,29 +92,25 @@ const CouncilDetailPage = () => {
                             <div className="mx-5">
                                 <h2 className="text-red-700 text-2xl font-semibold">Hội đồng HD001</h2>
                             </div>
-                            <div>
-                                <table className="w-5/6 m-auto my-5">
-                                    <thead className=" border-2 border-slate-400">
-                                        <tr>
-                                            <th>Thời gian bắt đầu</th>
-                                            <th>Thời gian kết thúc</th>
-                                            <th>Ngày diễn ra</th>
-                                            <th>Chủ tịch</th>
-                                            <th>Thư ký</th>
-                                            <th>Phản biện</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className=" border-2 border-slate-400">
-                                        <tr className="text-center">
-                                            <td>7:30</td>
-                                            <td>11:30</td>
-                                            <td>24/04/2023</td>
-                                            <td>Nguyễn văn A</td>
-                                            <td>Huỳnh Thị C</td>
-                                            <td>Nguyễn văn D</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div className="p-2 w-4/6 text-center rounded-md shadow-lg shadow-slate-400 mx-auto my-4">
+                                <div className="grid grid-cols-3 font-semibold text-md ">
+                                    <div className="border border-r-slate-300">Mã giảng viên</div>
+                                    <div className="border border-r-slate-300">Vị trí</div>
+                                    <div>Tên giảng viên</div>
+                                </div>
+                                <hr className="border border-slate-300"/>
+                                <div className="grid grid-cols-3">
+                                    <div className="border border-r-slate-300">GV001</div>
+                                    <div className="border border-r-slate-300">Chủ tịch</div>
+                                    <div>Nguyễn văn A</div>
+                                    <div className="border border-r-slate-300">GV002</div>
+                                    <div className="border border-r-slate-300">Thư ký</div>
+                                    <div>TNguyễn văn B</div>
+                                    <div className="border border-r-slate-300">GV003</div>
+                                    <div className="border border-r-slate-300">Phản biện</div>
+                                    <div>Nguyễn Văn c</div>
+                                </div>
+                             
                             </div>
                             <div className="flex justify-center my-2">
                                 <input className="py-2 w-1/3 border-2 border-slate-400 rounded-md outline-none " type="text" placeholder=" Mã đề tài, tên đề tài, sinh viên thực hiện ..."/>

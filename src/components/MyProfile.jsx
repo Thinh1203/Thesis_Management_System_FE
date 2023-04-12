@@ -1,7 +1,23 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DropDown from "./DropDown";
 import TeacherLeftDashboard from "./TeacherLeftDashboard";
+import { useEffect, useState } from "react";
+import jwt_decode from 'jwt-decode';
+import { getMyInf } from "../api/teacherApi";
+
+
 const MyProfile = () => {
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const decoded = jwt_decode(token);
+        const fetchApi = async () => {
+            const res = await getMyInf(decoded.id, token);
+            setUser(res);
+        }
+        fetchApi();
+    }, []);
     return (
         <div className="flex">
             <TeacherLeftDashboard />
@@ -24,23 +40,24 @@ const MyProfile = () => {
                                 <li className="font-medium text-blue-900 my-1"> Giới tính:</li>
                                 <li className="font-medium text-blue-900 my-1"> Địa chỉ:</li>
                                 <li className="font-medium text-blue-900 my-1"> Chức vụ:</li>
-                                {/* <li className="font-medium text-blue-900 my-1"> Khoa:</li> */}
+
                             </ul>
                         </div>
                         <div className="span-cols-2 px-5 py-5">
-                            <ul>
-                                <li className="my-1">admin</li>
-                                <li className="my-1">thinhb1910454@student.ctu.edu.vn</li>
-                                <li className="my-1">0345139122</li>
-                                <li className="my-1">Quách Huy Thịnh</li>
-                                <li className="my-1">Nam</li>
-                                <li className="my-1">Cần Thơ</li>
-                                <li className="my-1">admin</li>
-                                {/* <li className="my-1">Công nghệ thông tin</li> */}
-                            </ul>
+                            {user && (
+                                <ul>
+                                    <li className="my-1">{user.account}</li>
+                                    <li className="my-1">{user.email}</li>
+                                    <li className="my-1">{user.numberPhone}</li>
+                                    <li className="my-1">{user.fullName}</li>
+                                    <li className="my-1">{user.gender}</li>
+                                    <li className="my-1">{user.address}</li>
+                                    <li className="my-1">{user.role.description}</li>
+                                </ul>
+                            )}
                         </div>
                     </div>
-                    <Link to="/updateInformation"><button className="bg-green-700 text-white p-2 border rounded-md mx-10">Cập nhật thông tin</button></Link>
+                    <button onClick={() => navigate("/updateInformation",{state:{user}})} className="bg-green-700 text-white p-2 border rounded-md mx-10">Cập nhật thông tin</button>
                 </div>
 
             </div>
