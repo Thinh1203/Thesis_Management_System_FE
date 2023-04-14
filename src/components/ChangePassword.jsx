@@ -34,12 +34,12 @@ const ChangePassword = () => {
             if (res.statusCode !== 200)
                 return toast.error(res.message);
             toast.success("Đổi mật khẩu thành công!");
+            setTimeout(() => {
+                localStorage.removeItem("token");
+                navigate("/login"); 
+            }, 3000);
         }
         fetchApi();
-        setTimeout(() => {
-            localStorage.removeItem("token");
-            navigate("/login"); 
-        }, 3000);
     }
 
 

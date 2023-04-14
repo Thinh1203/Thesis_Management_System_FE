@@ -1,5 +1,5 @@
-import instance from "../utils/instance";
-import jwt_decode from "jwt-decode";
+import instance from "../../utils/instance";
+
 export const createAccount = async (newUser) => {
     try {
         const token = localStorage.getItem("token");
@@ -8,7 +8,22 @@ export const createAccount = async (newUser) => {
         };
       
         const res = await instance.post("/teacher/addTeacher", newUser, { headers });
-        console.log(res);
+        return res;
+    } catch (error) {
+        return (error.response.status);
+    }
+}
+
+export const uploadFile = async (file) => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+        };
+        const formData = new FormData();
+        formData.append('csv', file);
+        const res = await instance.post("/teacher/uploadFile", formData, { headers });
         return res;
     } catch (error) {
         return (error.response.status);
@@ -22,6 +37,19 @@ export const getListTeacher = async (page) => {
             'Authorization': `Bearer ${token}`
         };
         const res = await instance.get(`/teacher/getAll?page=${page} `, { headers });
+        return res.data;
+    } catch (error) {
+        return (error);
+    }
+}
+
+export const getOneTeacher = async (id) => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get(`/teacher/getOne/${id}`, { headers });
         return res.data;
     } catch (error) {
         return (error);
@@ -42,7 +70,7 @@ export const search = async (value) => {
     }
 }
 
-export const updateTeacher = async (id, data) => {
+export const updateStatus = async (id, data) => {
     try {
         const token = localStorage.getItem("token");
         const headers = {
@@ -64,7 +92,32 @@ export const deleteAccount = async (id) => {
             'Authorization': `Bearer ${token}`
         };
         const res = await instance.delete(`/teacher/deleteOne/${id}`, { headers });
-        console.log(res);
+        return res.data;
+    } catch (error) {
+        return (error);
+    }
+}
+
+export const roleAccount = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get("/role/getAll", { headers });
+        return res.data;
+    } catch (error) {
+        return (error);
+    }
+}
+
+export const updateTeacherInformation = async (id, data) => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.patch(`/teacher/updateTeacher/${id}`, data ,{ headers });
         return res.data;
     } catch (error) {
         return (error);

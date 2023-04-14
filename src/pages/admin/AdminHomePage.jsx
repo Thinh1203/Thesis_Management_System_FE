@@ -1,9 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DropDown from "../../components/DropDown";
 import TeacherLeftDashboard from "../../components/TeacherLeftDashboard";
 import { FaUserAlt, FaUserGraduate , FaUsers } from "react-icons/fa";
 import { GiBookmark } from "react-icons/gi";
+import { getTotalTeacher, getTotalStudent } from "../../api/adminApi/dashboard";
 const AdminHomePage = () => {
+
+    const [totalTeacher, setTotalTeacher] = useState(0);
+    const [totalStudent, setTotalStudent] = useState(0)
+
+    useEffect(() => {
+        const fetchApi = async () => {
+            const res = await getTotalTeacher();
+            setTotalTeacher(res.total);
+        };
+        fetchApi();
+    }, []);
+
+    
+    useEffect(() => {
+        const fetchApi = async () => {
+            const res = await getTotalStudent();
+            setTotalStudent(res.total);
+        };
+        fetchApi();
+    }, []);
+
     return (
         <div>
             <div className="flex">
@@ -22,7 +44,7 @@ const AdminHomePage = () => {
                             <div className="grid grid-cols-3 shadow-2xl w-5/6 h-32 shadow-slate-600 rounded-md">
                                 <div className="col-span-2 p-2 my-3 mx-2">
                                     <h4 className="font-medium text-lg text-slate-700">GIẢNG VIÊN</h4>
-                                    <p className="mt-2 font-semibold text-4xl">12</p>
+                                    <p className="mt-2 font-semibold text-4xl">{totalTeacher}</p>
                                 </div>
                                 <div className="rounded-full bg-sky-600 w-5/6 h-16 text-white px-4 mt-7"> 
                                     <div className="text-3xl mt-4 mx-1">
@@ -33,7 +55,7 @@ const AdminHomePage = () => {
                             <div className="grid grid-cols-3 shadow-2xl w-5/6 h-32 shadow-slate-600 rounded-md">
                                 <div className="col-span-2 p-2 my-3 mx-2">
                                     <h4 className="font-medium text-lg text-slate-700">SINH VIÊN</h4>
-                                    <p className="mt-2 font-semibold text-4xl">12</p>
+                                    <p className="mt-2 font-semibold text-4xl">{totalStudent}</p>
                                 </div>
                                 <div className="rounded-full bg-violet-600 w-5/6 h-16 text-white px-4 mt-7"> 
                                     <div className="text-3xl mt-4 mx-1">

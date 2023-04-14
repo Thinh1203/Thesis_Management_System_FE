@@ -39,7 +39,7 @@ const UpdateInformation = () => {
         const fetchApi = async () => {
             const token = localStorage.getItem("token");
             const res = await updateProfile(inf.id, newInformation, token);
-            if(res.status !== 200) 
+            if(res.statusCode !== 200) 
                 return toast.error('Có lỗi xảy ra');
             toast.success('Cập nhật thông tin thành công');
         }

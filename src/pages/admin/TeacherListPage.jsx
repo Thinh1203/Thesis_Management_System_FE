@@ -9,17 +9,16 @@ import { BsFillTrashFill, BsExclamationOctagonFill } from "react-icons/bs";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaLockOpen, FaLock } from "react-icons/fa";
-import { createAccount, getListTeacher, search, updateTeacher, deleteAccount } from "../../api/adminApi";
+import { createAccount, getListTeacher, search, updateStatus, deleteAccount, roleAccount, getOneTeacher, updateTeacherInformation, uploadFile } from "../../api/adminApi/teacherPage";
 import { checkEmail, checkPhoneNumber } from "../../utils/validation";
 import Paginate from "../../components/Paginate";
-import instance from "../../utils/instance";
 const TeacherListPage = () => {
     const [accountListModal, setAccountListModal] = useState(false);
     const [accountModal, setAccountModal] = useState(false);
     const [topicDetailModal, setTopicDetailModal] = useState(false);
     const [editProfileModal, setEditProfileModal] = useState(false);
     const [removeAccountModal, setRemoveAccountModal] = useState(false);
-    const [status, setStatus] = useState(false);
+    const [detailUser, setDetailUser] = useState({});
     const [lockModal, setLockModal] = useState(false);
     const [account, setAccount] = useState("");
     const [email, setEmail] = useState("");
@@ -34,6 +33,12 @@ const TeacherListPage = () => {
     const [results, setResults] = useState([]);
     const [data, setData] = useState({});
     const [removeUserId, setRemoveUserId] = useState(0);
+    const [idUser, setIdUser] = useState();
+    const [role, setRole] = useState([]);
+    const [updateData, setUpdateData] = useState({
+        email: "", fullName: "", numberPhone: "", address: "", gender: "", roleId: 0
+    });
+    const [selectedFile, setSelectedFile] = useState(null);
 
     useEffect(() => {
         const getAll = async () => {
@@ -63,7 +68,7 @@ const TeacherListPage = () => {
         fetchData();
     }, [query]);
     const updateAccountStatus = async (accountId, data) => {
-        const res = await updateTeacher(accountId, data);
+        const res = await updateStatus(accountId, data);
         if (res.status === 200) {
             if (!data) {
                 toast.success("Tài khoản đã bị khóa!");
@@ -80,6 +85,7 @@ const TeacherListPage = () => {
             toast.error("Có lỗi xảy ra!");
         }
     };
+
     const deleteUser = async (accountId) => {
         const res = await deleteAccount(accountId);
         if (res.statusCode === 200) {
@@ -87,9 +93,11 @@ const TeacherListPage = () => {
             if (query) {
                 const removeQuery = await search(query);
                 setResults(removeQuery);
+
             }
             const newUserList = await getListTeacher(page);
             setUser(newUserList.data);
+            setTotalPages(newUserList);
         } else {
             toast.error("Có lỗi xảy ra!");
         }
@@ -147,9 +155,65 @@ const TeacherListPage = () => {
                 return toast.error(res.data.message);
             toast.success("Thêm giảng viên thành công!");
             setAccountModal(false);
+            const newUserList = await getListTeacher(page);
+            setUser(newUserList.data);
+            setTotalPages(newUserList);
         }
         fetchApi();
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const detailUsers = await getOneTeacher(idUser);
+            setDetailUser(detailUsers);
+            const role = await roleAccount();
+            setRole(role);
+            setUpdateData({
+                email: detailUsers.email,
+                fullName: detailUsers.fullName,
+                numberPhone: detailUsers.numberPhone,
+                address: detailUsers.address,
+                gender: detailUsers.gender,
+                role: detailUsers.role.id
+            });
+        };
+        fetchData();
+    }, [idUser]);
+
+    const updateTeacher = async () => {
+        const res = await updateTeacherInformation(idUser, updateData);
+
+        if (res.statusCode === 200) {
+            toast.success("Cập nhật thành công");
+            setEditProfileModal(false);
+            const newUserList = await getListTeacher(page);
+            setUser(newUserList.data);
+            const response = await search(query);
+            setResults(response);
+            
+        } else {
+            toast.error("Có lỗi xảy ra!");
+        }
+    }
+    const handleFileInput = (event) => {
+        setSelectedFile(event.target.files[0]);
+      }
+    const postFile = async(e) => {
+        e.preventDefault();
+        const fetchApi = async () => {
+            const res = await uploadFile(selectedFile);
+            if (res.data.statusCode !== 200) {
+                setAccountListModal(false);
+                return toast.error(res.data.message);
+            }
+            toast.success("Thêm giảng viên thành công!");
+            setAccountListModal(false);
+            const newUserList = await getListTeacher(page);
+            setUser(newUserList.data);
+            setTotalPages(newUserList);
+        }
+        fetchApi();
+    }
 
 
     return (
@@ -230,7 +294,7 @@ const TeacherListPage = () => {
                                             <button onClick={() => setTopicDetailModal(true)} className="text-white bg-blue-700 hover:bg-blue-500 rounded-sm p-1"><AiFillFileText /></button>
                                         </div>
                                         <div className="py-1">
-                                            <button onClick={() => setEditProfileModal(true)} className="text-white bg-blue-700 rounded-sm hover:bg-blue-500 p-1 mr-1"><BiEdit /></button>
+                                            <button onClick={() => { setIdUser(e.id); setEditProfileModal(true); }} className="text-white bg-blue-700 rounded-sm hover:bg-blue-500 p-1 mr-1"><BiEdit /></button>
                                             <button onClick={() => { setRemoveUserId(e.id); setRemoveAccountModal(true); }} className="text-white bg-red-700 rounded-sm hover:bg-red-500  p-1 mr-1"><BsFillTrashFill /></button>
                                             {!e.status ?
                                                 (
@@ -259,7 +323,7 @@ const TeacherListPage = () => {
                                         <button onClick={() => setTopicDetailModal(true)} className="text-white bg-blue-700 hover:bg-blue-500 rounded-sm p-1"><AiFillFileText /></button>
                                     </div>
                                     <div className="py-1">
-                                        <button onClick={() => setEditProfileModal(true)} className="text-white bg-blue-700 rounded-sm hover:bg-blue-500 p-1 mr-1"><BiEdit /></button>
+                                        <button onClick={() => { setIdUser(e.id); setEditProfileModal(true); }} className="text-white bg-blue-700 rounded-sm hover:bg-blue-500 p-1 mr-1"><BiEdit /></button>
                                         <button onClick={() => { setRemoveUserId(e.id); setRemoveAccountModal(true); }} className="text-white bg-red-700 rounded-sm hover:bg-red-500  p-1 mr-1"><BsFillTrashFill /></button>
                                         {!e.status ?
                                             (
@@ -302,7 +366,7 @@ const TeacherListPage = () => {
                 </div>
             </div>
             <Modal isVisible={accountListModal}>
-                <form action="">
+                <form onSubmit={postFile}>
                     <h1 className="font-bold text-xl px-2 pb-2">Import danh sách giảng viên</h1>
                     <hr className=" border border-slate-300" />
                     <div className="mx-4 mt-2 py-2 bg-yellow-200">
@@ -315,72 +379,72 @@ const TeacherListPage = () => {
                         <p className="text-red-700 font-semibold"> (*)</p>
                     </div>
                     <div className="mx-5 mt-1 border-2 border-slate-300 rounded-sm">
-                        <input className="p-2" type="file" />
+                        <input className="p-2" type="file"  onChange={handleFileInput} />
                     </div>
                     <div className="grid grid-cols-2 mt-2">
-                        <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => setAccountListModal(false)}>Đóng</button>
-                        <button className=" mx-10 py-2 bg-green-600 text-white rounded ">Lưu lại</button>
+                        <button type="button" className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => setAccountListModal(false)}>Đóng</button>
+                        <button type="submit" className=" mx-10 py-2 bg-green-600 text-white rounded">Lưu lại</button>
                     </div>
                 </form>
             </Modal >
             <Modal isVisible={accountModal}>
-                    <h1 className="font-bold text-2xl px-2 pb-2">Thêm giảng viên</h1>
-                    <div className="grid grid-cols-3 p-4">
-                        <div className="px-2 grid grid-rows-6">
-                            <div className="font-semibold mt-1">Tài khoản<span className="text-red-700 font-semibold">(*)</span></div>
-                            <div className="font-semibold mt-1">Email<span className="text-red-700 font-semibold">(*)</span></div>
-                            <div className="font-semibold mt-1">Họ và tên<span className="text-red-700 font-semibold">(*)</span></div>
-                            <div className="font-semibold mt-1">Địa chỉ<span className="text-red-700 font-semibold">(*)</span></div>
-                            <div className="font-semibold mt-1">Số điện thoại<span className="text-red-700 font-semibold">(*)</span></div>
-                            <div className="font-semibold mt-1">Giới tính<span className="text-red-700 font-semibold">(*)</span></div>
+                <h1 className="font-bold text-2xl px-2 pb-2">Thêm giảng viên</h1>
+                <div className="grid grid-cols-3 p-4">
+                    <div className="px-2 grid grid-rows-6">
+                        <div className="font-semibold mt-1">Tài khoản<span className="text-red-700 font-semibold">(*)</span></div>
+                        <div className="font-semibold mt-1">Email<span className="text-red-700 font-semibold">(*)</span></div>
+                        <div className="font-semibold mt-1">Họ và tên<span className="text-red-700 font-semibold">(*)</span></div>
+                        <div className="font-semibold mt-1">Địa chỉ<span className="text-red-700 font-semibold">(*)</span></div>
+                        <div className="font-semibold mt-1">Số điện thoại<span className="text-red-700 font-semibold">(*)</span></div>
+                        <div className="font-semibold mt-1">Giới tính<span className="text-red-700 font-semibold">(*)</span></div>
+                    </div>
+                    <div className="col-span-2 grid grid-rows-6">
+                        <div className="mt-1">
+                            <input
+                                className="w-full  border border-slate-400 rounded-sm"
+                                type="text"
+                                onChange={(e) => setAccount(e.target.value)}
+                            />
                         </div>
-                        <div className="col-span-2 grid grid-rows-6">
-                            <div className="mt-1">
-                                <input
-                                    className="w-full  border border-slate-400 rounded-sm"
-                                    type="text"
-                                    onChange={(e) => setAccount(e.target.value)}
-                                />
-                            </div>
-                            <div className="mt-1">
-                                <input className="w-full border border-slate-400 rounded-sm"
-                                    type="email"
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                            </div>
-                            <div className="mt-1">
-                                <input
-                                    className="w-full border border-slate-400 rounded-sm"
-                                    type="text"
-                                    onChange={(e) => setFullName(e.target.value)}
-                                />
-                            </div>
-                            <div className="mt-1">
-                                <input
-                                    className="w-full border border-slate-400 rounded-sm"
-                                    type="text"
-                                    onChange={(e) => setAddress(e.target.value)}
-                                />
-                            </div>
-                            <div className="mt-1">
-                                <input
-                                    className="w-full  border border-slate-400 rounded-sm"
-                                    type="text"
-                                    onChange={(e) => setNumberPhone(e.target.value)}
-                                />
-                            </div>
-                            <div className="mt-1">
-                                <select className="border border-black rounded-sm" onChange={(e) => setGender(e.target.value)}>
-                                    <option value="Nam">Nam</option>
-                                    <option value="Nữ">Nữ</option>
-                                </select>
-                            </div>
+                        <div className="mt-1">
+                            <input className="w-full border border-slate-400 rounded-sm"
+                                type="email"
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+                        <div className="mt-1">
+                            <input
+                                className="w-full border border-slate-400 rounded-sm"
+                                type="text"
+                                onChange={(e) => setFullName(e.target.value)}
+                            />
+                        </div>
+                        <div className="mt-1">
+                            <input
+                                className="w-full border border-slate-400 rounded-sm"
+                                type="text"
+                                onChange={(e) => setAddress(e.target.value)}
+                            />
+                        </div>
+                        <div className="mt-1">
+                            <input
+                                className="w-full  border border-slate-400 rounded-sm"
+                                type="text"
+                                onChange={(e) => setNumberPhone(e.target.value)}
+                            />
+                        </div>
+                        <div className="mt-1">
+                            <select className="border border-black rounded-sm" onChange={(e) => setGender(e.target.value)}>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </select>
                         </div>
                     </div>
-                    <div className="grid grid-cols-2 mt-2">
-                        <button type="button" className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => setAccountModal(false)}>Đóng</button>
-                        <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={(e) => {handleSubmit(e);  }}>Lưu lại</button>
-                    </div>
+                </div>
+                <div className="grid grid-cols-2 mt-2">
+                    <button type="button" className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => setAccountModal(false)}>Đóng</button>
+                    <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={(e) => { handleSubmit(e); }}>Lưu lại</button>
+                </div>
             </Modal>
             <Modal isVisible={lockModal}>
                 <BsExclamationOctagonFill className="text-4xl text-yellow-400 m-auto animate-bounce " />
@@ -419,50 +483,75 @@ const TeacherListPage = () => {
 
             </Modal>
             <Modal isVisible={editProfileModal}>
-                <form action="">
-                    <h1 className="font-bold text-2xl px-2 pb-2">Sửa thông tin</h1>
-                    <div className="grid grid-cols-3 p-4">
-                        <div className="px-2 grid grid-rows-6">
-                            <div className="font-semibold mt-1">Email<span className="text-red-700 font-semibold">(*)</span></div>
-                            <div className="font-semibold mt-1">Họ và tên<span className="text-red-700 font-semibold">(*)</span></div>
-                            <div className="font-semibold mt-1">Địa chỉ<span className="text-red-700 font-semibold">(*)</span></div>
-                            <div className="font-semibold mt-1">Giới tính<span className="text-red-700 font-semibold">(*)</span></div>
-                            <div className="font-semibold mt-1">Số điện thoại<span className="text-red-700 font-semibold">(*)</span></div>
-                            <div className="font-semibold mt-1">Chức vụ<span className="text-red-700 font-semibold">(*)</span></div>
-                        </div>
-                        <div className="col-span-2 grid grid-rows-6">
 
-                            <div className="mt-1">
-                                <input className="w-full border border-slate-400 rounded-sm" type="email" />
-                            </div>
-                            <div className="mt-1">
-                                <input className="w-full border border-slate-400 rounded-sm" type="text" />
-                            </div>
-                            <div className="mt-1">
-                                <input className="w-full border border-slate-400 rounded-sm" type="text" />
-                            </div>
-                            <div className="mt-1">
-                                <select name="" id="" className="border border-black rounded-sm">
-                                    <option value="">Nam</option>
-                                    <option value="">Nữ</option>
-                                </select>
-                            </div>
-                            <div className="mt-1">
-                                <input className="w-full  border border-slate-400 rounded-sm" type="text" />
-                            </div>
-                            <div className="mt-1">
-                                <select name="" id="" className="border border-black rounded-sm">
-                                    <option value="">Giảng viên</option>
-                                    <option value="">Sinh viên</option>
-                                </select>
-                            </div>
+                <h1 className="font-bold text-2xl px-2 pb-2">Sửa thông tin</h1>
+                <div className="grid grid-cols-3 p-4">
+                    <div className="px-2 grid grid-rows-6">
+                        <div className="font-semibold mt-1">Email<span className="text-red-700 font-semibold">(*)</span></div>
+                        <div className="font-semibold mt-1">Họ và tên<span className="text-red-700 font-semibold">(*)</span></div>
+                        <div className="font-semibold mt-1">Địa chỉ<span className="text-red-700 font-semibold">(*)</span></div>
+                        <div className="font-semibold mt-1">Giới tính<span className="text-red-700 font-semibold">(*)</span></div>
+                        <div className="font-semibold mt-1">Số điện thoại<span className="text-red-700 font-semibold">(*)</span></div>
+                        <div className="font-semibold mt-1">Chức vụ<span className="text-red-700 font-semibold">(*)</span></div>
+                    </div>
+                    <div className="col-span-2 grid grid-rows-6">
+
+                        <div className="mt-1">
+                            <input
+                                className="w-full border border-slate-400 rounded-sm"
+                                type="email"
+                                name="email"
+                                defaultValue={detailUser.email}
+                                onChange={(e) => setUpdateData(({ ...updateData, email: e.target.value }))}
+                            />
+                        </div>
+                        <div className="mt-1">
+                            <input
+                                className="w-full border border-slate-400 rounded-sm"
+                                type="text"
+                                name="fullName"
+                                defaultValue={detailUser.fullName}
+                                onChange={(e) => setUpdateData(({ ...updateData, fullName: e.target.value }))}
+                            />
+                        </div>
+                        <div className="mt-1">
+                            <input
+                                className="w-full border border-slate-400 rounded-sm"
+                                type="text"
+                                name="address"
+                                defaultValue={detailUser.address}
+                                onChange={(e) => setUpdateData(({ ...updateData, address: e.target.value }))}
+                            />
+                        </div>
+                        <div className="mt-1">
+                            <select className="border border-black rounded-sm" onChange={(e) => setUpdateData(({ ...updateData, gender: e.target.value }))}>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </select>
+                        </div>
+                        <div className="mt-1">
+                            <input
+                                className="w-full  border border-slate-400 rounded-sm"
+                                type="text"
+                                name="numberPhone"
+                                defaultValue={detailUser.numberPhone}
+                                onChange={(e) => setUpdateData(({ ...updateData, numberPhone: e.target.value }))}
+                            />
+                        </div>
+                        <div className="mt-1">
+                            <select className="border border-black rounded-sm" onChange={(e) => setUpdateData({ ...updateData, roleId: e.target.options[e.target.selectedIndex].getAttribute("value") })} >
+                                {role.map((e) => (
+                                    <option key={e.id} selected={e.code === detailUser.role?.code} value={e.id}>{e.description}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
-                    <div className="grid grid-cols-2 mt-2">
-                        <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => setEditProfileModal(false)}>Đóng</button>
-                        <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { setEditProfileModal(false); }}>Lưu lại</button>
-                    </div>
-                </form>
+                </div>
+                <div className="grid grid-cols-2 mt-2">
+                    <button type="button" className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => { { setDetailUser({}); setUpdateData({ email: "", fullName: "", numberPhone: "", address: "", gender: "", role: 0 }); setEditProfileModal(false); } }}>Đóng</button>
+                    <button className=" mx-10 py-2 bg-green-600 text-white rounded" onClick={() => updateTeacher()}>Lưu lại</button>
+                </div>
+
             </Modal>
             <Modal isVisible={topicDetailModal}>
                 <div className="flex justify-between">
