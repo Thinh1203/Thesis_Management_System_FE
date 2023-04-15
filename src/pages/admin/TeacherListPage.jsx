@@ -89,15 +89,23 @@ const TeacherListPage = () => {
     const deleteUser = async (accountId) => {
         const res = await deleteAccount(accountId);
         if (res.statusCode === 200) {
-            toast.success("Đã xóa tài khoản!");
             if (query) {
                 const removeQuery = await search(query);
                 setResults(removeQuery);
-
             }
-            const newUserList = await getListTeacher(page);
+            let newUserList = await getListTeacher(page);
+            if (newUserList.statusCode === 400) {
+                newUserList = await getListTeacher(page-1);
+                setPage(page - 1);
+                setUser(newUserList.data);
+                setTotalPages(newUserList);
+                toast.success("Đã xóa tài khoản!")
+                return setRemoveAccountModal(false)
+            }
+            toast.success("Đã xóa tài khoản!");
             setUser(newUserList.data);
             setTotalPages(newUserList);
+            setRemoveAccountModal(false);
         } else {
             toast.error("Có lỗi xảy ra!");
         }
@@ -478,7 +486,7 @@ const TeacherListPage = () => {
                 <p>Khi xóa tài khoản người dùng sẽ <b>Không</b> thể đăng nhập hệ thống!</p>
                 <div className="grid grid-cols-2 mt-2">
                     <button type="button" className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => { setRemoveUserId(0); setRemoveAccountModal(false); }}>Đóng</button>
-                    <button type="button" className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { deleteUser(removeUserId); setRemoveAccountModal(false); }}>Lưu lại</button>
+                    <button type="button" className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { deleteUser(removeUserId); }}>Lưu lại</button>
                 </div>
 
             </Modal>
@@ -548,7 +556,7 @@ const TeacherListPage = () => {
                     </div>
                 </div>
                 <div className="grid grid-cols-2 mt-2">
-                    <button type="button" className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => { { setDetailUser({}); setUpdateData({ email: "", fullName: "", numberPhone: "", address: "", gender: "", role: 0 }); setEditProfileModal(false); } }}>Đóng</button>
+                    <button type="button" className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => { { setDetailUser({}); setIdUser(0); setUpdateData({ email: "", fullName: "", numberPhone: "", address: "", gender: "", role: 0 }); setEditProfileModal(false); } }}>Đóng</button>
                     <button className=" mx-10 py-2 bg-green-600 text-white rounded" onClick={() => updateTeacher()}>Lưu lại</button>
                 </div>
 

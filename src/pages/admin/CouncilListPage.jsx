@@ -186,7 +186,7 @@ const CouncilListPage = () => {
                                         </div>
                                     </Modal>
                                     <ToastContainer
-                                        position="top-center"
+                                        position="top-right"
                                         autoClose={1000}
                                         hideProgressBar={false}
                                         newestOnTop={false}

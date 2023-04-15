@@ -16,7 +16,6 @@ const StudentListPage = () => {
     const [accountModal, setAccountModal] = useState(false);
     const [editProfileModal, setEditProfileModal] = useState(false);
     const [removeAccountModal, setRemoveAccountModal] = useState(false);
-    const [status, setStatus] = useState(true);
     const [lockModal, setLockModal] = useState(false);
     const [user, setUser] = useState([]);
     const [page, setPage] = useState(1);
@@ -41,7 +40,6 @@ const StudentListPage = () => {
     useEffect(() => {
         const getAll = async () => {
             const res = await getListStudent(page);
-            
             setUser(res.data);
             setTotalPages(res);
         }
@@ -56,9 +54,9 @@ const StudentListPage = () => {
                     setResults(response.data);
                     setTotalPagesQuery(response);
                     setSearchData(true);
-                    
+
                 } else {
-                    
+
                     setSearchData(false);
                 }
 
@@ -188,24 +186,36 @@ const StudentListPage = () => {
     const deleteUser = async (accountId) => {
         const res = await deleteAccount(accountId);
         if (res.statusCode === 200) {
-            toast.success("Đã xóa tài khoản!");
             if (query) {
-                const removeQuery = await search(query, pageQuery);
+                let removeQuery = await search(query, pageQuery);
                 if (removeQuery.statusCode === 200) {
                     setResults(removeQuery.data);
                     setTotalPagesQuery(removeQuery);
                     return setSearchData(true);
                 } else {
+                    removeQuery = await search(query, pageQuery - 1);
+                    setResults(removeQuery.data);
+                    setTotalPagesQuery(removeQuery)
                     return setSearchData(false);
                 }
             }
-            const newUserList = await getListStudent(page);
+            let newUserList = await getListStudent(page);
+            if (newUserList.statusCode === 400) {
+                setPage(page - 1);
+                newUserList = await getListStudent(page - 1);
+                setUser(newUserList.data);
+                setTotalPages(newUserList);
+                toast.success("Đã xóa tài khoản!");
+                return setRemoveAccountModal(false); 
+            }
             setUser(newUserList.data);
             setTotalPages(newUserList);
+            toast.success("Đã xóa tài khoản!");
+            setRemoveAccountModal(false); 
         } else {
             toast.error("Có lỗi xảy ra!");
         }
-    };
+    }
 
     return (
         <div>
@@ -480,7 +490,7 @@ const StudentListPage = () => {
                 <p>Khi xóa tài khoản người dùng sẽ <b>Không</b> thể đăng nhập hệ thống!</p>
                 <div className="grid grid-cols-2 mt-2">
                     <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => setRemoveAccountModal(false)}>Đóng</button>
-                    <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { deleteUser(removeUserId); setRemoveAccountModal(false); }}>Lưu lại</button>
+                    <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { deleteUser(removeUserId);}}>Lưu lại</button>
                 </div>
             </Modal>
             <Modal isVisible={editProfileModal}>
@@ -535,7 +545,7 @@ const StudentListPage = () => {
                     </div>
                 </div>
                 <div className="grid grid-cols-2 mt-2">
-                    <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => { { setDetailUser({}); setUpdateData({ email: "", fullName: "", numberPhone: "", address: "", gender: "" }); setEditProfileModal(false); } }}>Đóng</button>
+                    <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => { { setDetailUser({}); setUpdateData({ email: "", fullName: "", numberPhone: "", address: "", gender: "" }); setIdUser(0); setEditProfileModal(false); } }}>Đóng</button>
                     <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => updateStudent()}>Lưu lại</button>
                 </div>
 
