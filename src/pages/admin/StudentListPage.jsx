@@ -183,6 +183,7 @@ const StudentListPage = () => {
         }
         fetchApi();
     }
+   
     const deleteUser = async (accountId) => {
         const res = await deleteAccount(accountId);
         if (res.statusCode === 200) {
@@ -193,6 +194,7 @@ const StudentListPage = () => {
                     setTotalPagesQuery(removeQuery);
                     return setSearchData(true);
                 } else {
+                    console.log(page);
                     removeQuery = await search(query, pageQuery - 1);
                     setResults(removeQuery.data);
                     setTotalPagesQuery(removeQuery)
@@ -202,7 +204,7 @@ const StudentListPage = () => {
             let newUserList = await getListStudent(page);
             if (newUserList.statusCode === 400) {
                 setPage(page - 1);
-                newUserList = await getListStudent(page - 1);
+                newUserList = await getListStudent(page);
                 setUser(newUserList.data);
                 setTotalPages(newUserList);
                 toast.success("Đã xóa tài khoản!");

@@ -9,6 +9,9 @@ module.exports = {
         "100": "32rem",
         "26": "6.76rem"
       },
+      width: {
+        "100": "30rem"
+      },
       margin: {
         "112": "28rem"
       }

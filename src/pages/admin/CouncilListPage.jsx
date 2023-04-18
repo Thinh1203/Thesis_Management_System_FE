@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DropDown from "../../components/DropDown";
@@ -10,94 +10,219 @@ import { AiOutlineEye } from "react-icons/ai";
 import { BsFillTrashFill, BsExclamationOctagonFill } from "react-icons/bs";
 import { BiEdit } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
+import { getAllSemester, getAllTeacher, addCouncil, getAll, statusCouncil, getOneUpdate, updateCouncil, deleteOne } from "../../api/adminApi/council";
+import Paginate from "../../components/Paginate";
 const CouncilListPage = () => {
-    const [lock, setLock] = useState(false);
     const [remove, setRemove] = useState(false);
     const [lockModal, setLockModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const [rowCount, setRowCount] = useState(1);
+    const [newCouncil, setNewCouncil] = useState({
+        code: "",
+        timeStart: "",
+        timeEnd: "",
+        startDate: "",
+        shoolYearId: 0,
+        user: [
+            {
+                position: "Chủ tịch",
+                userId: 0
+            },
+            {
+                position: "Thư ký",
+                userId: 0
+            },
+            {
+                position: "Phản biện",
+                userId: 0
+            },
+        ]
+    });
+    const [editCouncil, setEditCouncil] = useState(false);
+    const [user, setUser] = useState([]);
+    const [semester, setSemester] = useState([]);
+    const [councilList, setCouncilList] = useState([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [updateStatus, setUpdateStatus] = useState({});
+    // const [totalPagesQuery, setTotalPagesQuery] = useState(1);
+    // const [pageQuery, setPageQuery] = useState(1);
+    const [idEditCouncil, setIdEditCouncil] = useState(0);
+    const [editOne, setEditOne] = useState([]);
+    const [updateData, setUpdateData] = useState({
+        timeStart: "", timeEnd: "", startDate: ""
+    });
+    const [idRemoveCouncil, setIdRemoveCouncil] = useState(0);
+    const [idDetailCouncil, setIdDetailCouncil] = useState(0);
 
-    const [status, setStatus] = useState();
-
-    const notify = (text) => {
-        toast.success(text, {
-            position: "top-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-    }
     const navigate = useNavigate();
     const CouncilDetail = () => navigate("/admin/council/detail");
 
-    const addRow = () => {
-        setRowCount(rowCount + 1);
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getAllTeacher();
+            setUser(res.data);
+        };
+        fetchData();
+    }, []);
 
-    const removeRow = () => {
-        setRowCount(rowCount - 1);
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getAllSemester();
+            setSemester(res.data);
+        };
+        fetchData();
+    }, []);
 
-
-    const renderRows = () => {
-        const rows = [];
-        for (let i = 0; i < rowCount; i++) {
-            rows.push(
-                <tr key={i} className="border-b-2 py-2">
-                    <td className="border-r-2 px-2 py-2">
-                        <input
-                            className="w-full rounded-sm shadow-sm shadow-slate-500 focus:bg-blue-200"
-                            type="text"
-                        />
-                    </td>
-                    <td className="px-2 py-2">
-                        <input
-                            className="w-full rounded-sm shadow-sm shadow-slate-500 focus:bg-blue-200"
-                            type="text"
-                            value=""
-                        />
-                    </td>
-                </tr>
-            );
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getAll(page);
+            setCouncilList(res.data);
+            setTotalPages(res);
+        };
+        fetchData();
+    }, [page, councilList]);
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages.lastPage) {
+            setPage(newPage);
         }
-        return rows;
     };
-    const council = [
-        {
-            "id": 1,
-            "code": "HD001",
-            "year": "2022-2023",
-            "courses": 1,
-            "status": true,
-            "timeStart": "7:30",
-            "timeEnd": "11:30",
-            "startDate":"24/03/2023"
-        },
-        {
-            "id": 2,
-            "code": "HD002",
-            "year": "2022-2023",
-            "courses": 2,
-            "status": true,
-            "timeStart": "7:30",
-            "timeEnd": "11:30",
-            "startDate":"24/03/2023"
-        },
-        {
-            "id": 3,
-            "code": "HD003",
-            "year": "2023-2024",
-            "courses": 1,
-            "status": false,
-            "timeStart": "7:30",
-            "timeEnd": "11:30",
-            "startDate":"24/03/2023"
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getOneUpdate(idEditCouncil);
+            setEditOne (res);
+            setUpdateData({
+                timeStart: editOne.timeStart,
+                timeEnd: editOne.timeEnd,
+                startDate: editOne.startDate
+            });
+        };
+        fetchData();
+    }, [idEditCouncil]);
+
+    //update information council
+    const updateInfCouncil = async () => {
+        const res = await updateCouncil(idEditCouncil, updateData);
+        if (res.statusCode === 200) {
+            toast.success("Cập nhật thành công");
+            setEditCouncil(false);
+            const newCouncil = await getAll(page);
+            setUser(newCouncil.data);
+            setTotalPages(newCouncil);
+            // if (query) {
+            //     const response = await search(query, pageQuery);
+            //     if (response.statusCode === 200) {
+            //         setResults(response.data);
+            //         setTotalPagesQuery(response);
+            //         setSearchData(true);
+            //     } else {
+            //         setSearchData(false);
+            //     }
+
+            // }
+
+        } else {
+            toast.error("Có lỗi xảy ra!");
         }
-    ];
+    }
+
+    // update councils status
+    const updateCouncilStatus = async (accountId, data) => {
+        const res = await statusCouncil(accountId, data);
+        if (res.statusCode === 200) {
+            if (!data) {
+                toast.success("Đã khóa hội đồng!");
+            } else {
+                toast.success("Đã mở hội đồng!");
+            }
+            // if (query) {
+            //     const response = await search(query, pageQuery);
+            //     if (response.statusCode === 200) {
+            //         setResults(response.data);
+            //         setTotalPagesQuery(response);
+            //         setSearchData(true);
+            //     } else {
+            //         setSearchData(false);
+            //     }
+
+            // }
+            const updatedList = await getAll(page);
+            setUser(updatedList.data);
+        } else {
+            toast.error("Có lỗi xảy ra!");
+        }
+    };
+    
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!newCouncil.code) return toast.error("Vui lòng nhập mã hội đồng!");
+        if (!newCouncil.timeStart) return toast.error("Vui lòng nhập thời gian bắt đầu!");
+        if (!newCouncil.timeEnd) return toast.error("Vui lòng nhập thời gian kết thúc!");
+        if (!newCouncil.shoolYearId) return toast.error("Vui lòng chọn niên khóa!");
+        const fetchApi = async () => {
+
+            const res = await addCouncil(newCouncil);
+            if (res.statusCode !== 200) {
+                return toast.error(res.data.message);
+            }
+            toast.success("Thêm hội đồng thành công!");
+            const resetData = await getAll(page);
+            setCouncilList(resetData.data);
+            setTotalPages(resetData);
+        }
+        fetchApi();
+    };
+    const reSetData = () => {
+        setNewCouncil({
+            code: "",
+            timeStart: "",
+            timeEnd: "",
+            startDate: "",
+            shoolYearId: 0,
+            user: [
+                {
+                    position: "Chủ tịch",
+                    userId: 0
+                },
+                {
+                    position: "Thư ký",
+                    userId: 0
+                },
+                {
+                    position: "Phản biện",
+                    userId: 0
+                },
+            ]
+        });
+        setShowModal(false);
+    }
+
+    const deleteOneCouncil = async () => {
+        const res = await deleteOne(idRemoveCouncil);
+        if (res.statusCode !== 200) {
+            return toast.error("có lỗi xảy ra!");
+        }
+
+        let newCouncil = await getAll(page);
+        if (newCouncil.statusCode === 400) {
+            newCouncil = await getAll(page - 1);
+            setPage(page - 1);
+            setCouncilList(newCouncil.data);
+            setTotalPages(newCouncil);
+            toast.success("Xoá thành công!");
+            return ;
+        }
+        setCouncilList(newCouncil.data);
+        setTotalPages(newCouncil);
+        toast.success("Xoá thành công!");
+    
+    }
+
+  
+    
+
+
     return (
         <div>
             <div className="flex">
@@ -106,7 +231,7 @@ const CouncilListPage = () => {
                     <div className=" flex justify-end mx-10 my-5">
                         <DropDown />
                     </div>
-                    <div className="mt-20">
+                    <div className="mt-20 text">
                         <div className="border-2 rounded-xl mx-5 my-5 shadow-lg shadow-slate-400 py-4">
                             <h4 className="mx-4 font-bold text-gray-700 text-lg">Hội đồng</h4>
                             <span className="flex"><p className="ml-4 mr-2 font-medium text-md">Trang chủ &#62;</p>  <p className="text-md text-blue-800 font-semibold">Danh sách hội đồng</p></span>
@@ -114,12 +239,12 @@ const CouncilListPage = () => {
                         <div className="rounded-xl h-full shadow-lg shadow-slate-400 py-4 mx-4">
                             <div className="ml-4">
                                 <input className="border-2 border-slate-400 p-1 w-1/3 rounded-md outline-none" type="text" placeholder="Mã hội đồng" />
-
+                                {/* 
                                 <select className="border-2 border-slate-400 rounded-sm py-1 px-2 ml-5" name="" id="" value="">
                                     <option value="">Mặc định</option>
                                     <option value="true">Đang mở</option>
                                     <option value="false">Đang khóa</option>
-                                </select>
+                                </select> */}
                             </div>
                             <div className="grid grid-cols-2">
                                 <div className="ml-4">
@@ -128,61 +253,102 @@ const CouncilListPage = () => {
                                 <div className="flex justify-end mr-4">
                                     <button className="p-2 flex bg-green-700 hover:bg-green-500 text-white rounded-sm" onClick={() => setShowModal(true)}><IoMdAddCircleOutline className="mr-1 mt-1 text-lg" />Tạo hội đồng</button>
                                     <Modal isVisible={showModal}>
-                                        <div className="p-2 text-left w-96">
-                                            <h3 className="text-xl font-semibold text-red-700">Tạo hội đồng</h3>
-                                            <form action="#">
-                                                <div className="p-2">
-                                                    <label htmlFor="" className="text-sm font-semibold">Mã hội đồng</label>
-                                                    <input type="text" className="w-full border-2 border-slate-300 rounded-sm mt-2" />
-                                                </div>
+                                        <div className="text-left w-100">
+                                            <h3 className="text-2xl font-semibold text-red-700">Tạo hội đồng</h3>
+                                            <div className="p-2">
+                                                <h4 className="text-md font-semibold">Mã hội đồng</h4>
+                                                <input
+                                                    type="text"
+                                                    className="w-full border-2 p-2 border-slate-400 rounded-sm mt-2"
+                                                    onChange={(e) => setNewCouncil({ ...newCouncil, code: e.target.value })} />
+                                            </div>
 
-                                                <div className="p-2">
-                                                    <label htmlFor="" className="text-sm font-semibold">Giờ bắt đầu</label>
-                                                    <input type="time" className="w-full border-2 border-slate-300 rounded-sm mt-2" />
-                                                </div>
+                                            <div className="p-2">
+                                                <h4 className="text-md font-semibold">Giờ bắt đầu</h4>
+                                                <input
+                                                    type="time"
+                                                    className="w-full border-2 p-2 border-slate-400 rounded-sm mt-2"
+                                                    onChange={(e) => setNewCouncil({ ...newCouncil, timeStart: e.target.value })} />
+                                            </div>
 
-                                                <div className="p-2">
-                                                    <label htmlFor="" className="text-sm font-semibold">Giờ kết thúc </label>
-                                                    <input type="time" className="w-full border-2 border-slate-300 rounded-sm mt-2" />
-                                                </div>
+                                            <div className="p-2">
+                                                <h4 className="text-md font-semibold">Giờ kết thúc </h4>
+                                                <input
+                                                    type="time"
+                                                    className="w-full border-2 p-2 border-slate-400 rounded-sm mt-2"
+                                                    onChange={(e) => setNewCouncil({ ...newCouncil, timeEnd: e.target.value })} />
+                                            </div>
 
-                                                <div className="p-2">
-                                                    <label htmlFor="" className="text-sm font-semibold">Ngày diễn ra </label>
-                                                    <input type="date" className="w-full border-2 border-slate-300 rounded-sm mt-2" />
-                                                </div>
+                                            <div className="p-2">
+                                                <h4 className="text-md font-semibold">Ngày diễn ra </h4>
+                                                <input
+                                                    type="date"
+                                                    className="w-full border-2 p-2 border-slate-400 rounded-sm mt-2"
+                                                    onChange={(e) => setNewCouncil({ ...newCouncil, startDate: e.target.value })} />
+                                            </div>
 
-                                                <div className="p-2 ">
-                                                    <label htmlFor="" className="text-sm font-semibold">Thành viên hội đồng </label>
-                                                    <div className="border-2 border-slate-300 mt-2">
-                                                        <table className="w-full ">
-                                                            <thead>
-                                                                <tr className="border-b-2">
-                                                                    <th className="text-md font-semibold px-4 py-2">Chức vụ</th>
-                                                                    <th className="text-md font-semibold py-2">Giảng viên</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {renderRows()}
-                                                            </tbody>
-                                                            <tfoot >
-                                                                <tr>
-                                                                    <th className="py-2 ">
-                                                                        <button onClick={addRow} className="flex ml-2 text-blue-500 font-medium text-sm"><IoMdAddCircleOutline className="mt-1 mr-1" />Thêm thành viên</button>
-                                                                    </th>
-                                                                    <th className="py-2 ">
-                                                                        <button onClick={removeRow} className="flex ml-auto mr-2 text-red-500 font-medium text-sm"><IoMdRemoveCircleOutline className="mt-1 mr-1" />Xoá</button>
-                                                                    </th>
-                                                                </tr>
-                                                            </tfoot>
-                                                        </table>
+                                            <div className="p-2">
+                                                <h4 className="text-md font-semibold">Niên khóa </h4>
+                                                <select onChange={(e) => setNewCouncil({ ...newCouncil, shoolYearId: e.target.value })} className="border-2 w-full border-zinc-500 rounded-sm p-1 my-1">
+                                                    {
+                                                        semester?.map(e => (
+                                                            <option key={e.id} value={e.id}>{e.year} - Học kỳ: {e.semester} </option>
+                                                        ))
+                                                    }
+                                                </select>
+                                            </div>
+
+                                            <div className="p-2 ">
+                                                <h4 className="text-md font-semibold">Thành viên hội đồng </h4>
+
+                                                <div className="border-2 border-slate-400 mt-2">
+                                                    <div className="w-full grid grid-cols-3 ">
+                                                        <div className="p-2">
+                                                            <input
+                                                                type="text"
+                                                                defaultValue={newCouncil.user[0].position}
+                                                                className="border-2 w-full border-zinc-500  rounded-sm p-1 my-1" />
+                                                            <input
+                                                                type="text"
+                                                                defaultValue={newCouncil.user[1].position}
+                                                                className="border-2 w-full border-zinc-500  rounded-sm p-1 my-1" />
+                                                            <input
+                                                                type="text"
+                                                                defaultValue={newCouncil.user[2].position}
+                                                                className="border-2 w-full border-zinc-500  rounded-sm p-1 my-1" />
+                                                        </div>
+                                                        <div className="p-2 col-span-2 w-full">
+                                                            <select onChange={(e) => setNewCouncil({ ...newCouncil, user: newCouncil.user.map((element, index) => (index === 0) ? { position: "Chủ tịch", userId: e.target.value } : element) })} className="border-2 w-full border-zinc-500 rounded-sm p-1 my-1">
+                                                                {
+                                                                    user.map(e => (
+                                                                        <option key={e.id} value={e.id}>{e.fullName}</option>
+                                                                    ))
+                                                                }
+                                                            </select>
+                                                            <select onChange={(e) => setNewCouncil({ ...newCouncil, user: newCouncil.user.map((element, index) => (index === 1) ? { position: "Thư ký", userId: e.target.value } : element) })} className="border-2 w-full border-zinc-500 rounded-sm p-1 my-1">
+                                                                {
+                                                                    user.map(e => (
+                                                                        <option key={e.id} value={e.id}>{e.fullName}</option>
+                                                                    ))
+                                                                }
+                                                            </select>
+                                                            <select onChange={(e) => setNewCouncil({ ...newCouncil, user: newCouncil.user.map((element, index) => (index === 2) ? { position: "Phản biện", userId: e.target.value } : element) })} className="border-2 w-full border-zinc-500 rounded-sm p-1 my-1">
+                                                                {
+                                                                    user.map(e => (
+                                                                        <option key={e.id} value={e.id}>{e.fullName}</option>
+                                                                    ))
+                                                                }
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                            </div>
 
-                                                <div className="grid grid-cols-2 mt-2">
-                                                    <button className=" mx-2 py-2 bg-gray-500 text-white rounded " onClick={() => setShowModal(false)}>Đóng</button>
-                                                    <button className=" mx-2 py-2 bg-green-600 text-white rounded " onClick={() => { setShowModal(false); setRowCount(1); notify('Đã thêm hội đồng!') }}>Lưu lại</button>
-                                                </div>
-                                            </form>
+                                            <div className="grid grid-cols-2 mt-2">
+                                                <button className=" mx-2 py-2 bg-gray-500 text-white rounded " onClick={() => reSetData()}>Đóng</button>
+                                                <button className=" mx-2 py-2 bg-green-600 text-white rounded " onClick={(e) => { handleSubmit(e); setShowModal(false); }}>Lưu lại</button>
+                                            </div>
+
                                         </div>
                                     </Modal>
                                     <ToastContainer
@@ -228,68 +394,68 @@ const CouncilListPage = () => {
                                     </thead>
                                     <tbody>
                                         {
-                                            council.map(e => (
+                                            councilList?.map(e => (
                                                 <tr className="text-center" key={e.id}>
                                                     <td className="border-2 border-slate-400 py-2" >{e.code}</td>
-                                                    <td className="border-2 border-slate-400 py-2" >{e.timeStart}</td>
-                                                    <td className="border-2 border-slate-400 py-2" >{e.timeEnd}</td>
-                                                    <td className="border-2 border-slate-400 py-2" >{e.startDate}</td>
-                                                    <td className="border-2 border-slate-400  py-2">{e.year}</td>
-                                                    <td className="border-2 border-slate-400  py-2">{e.courses}</td>
+                                                    <td className="border-2 border-slate-400 py-2" >{e.timeStart.slice(0, -3)}</td>
+                                                    <td className="border-2 border-slate-400 py-2" >{e.timeEnd.slice(0, -3)}</td>
+                                                    <td className="border-2 border-slate-400 py-2" >{new Date(e.startDate).toLocaleDateString('en-GB')}</td>
+                                                    <td className="border-2 border-slate-400  py-2">{e.shoolYear.year}</td>
+                                                    <td className="border-2 border-slate-400  py-2">{e.shoolYear.semester}</td>
                                                     <td className=" border-r-2 border-b-2  border-slate-400  py-2 flex justify-center">
                                                         <div>
-                                                            {!lock ?
+                                                            {!e.status ?
                                                                 (
                                                                     <div>
-                                                                        <button onClick={() => { setLockModal(true) }} className="bg-red-700 hover:bg-red-500 p-2 mr-2 text-white rounded-sm"><FaLock /></button>
+                                                                        <button onClick={() => { setUpdateStatus({ id: e.id, status: !e.status }); setLockModal(true) }} className="bg-red-700 hover:bg-red-500 p-2 mr-2 text-white rounded-sm"><FaLock /></button>
                                                                         <Modal isVisible={lockModal}>
                                                                             <BsExclamationOctagonFill className="text-4xl text-yellow-400 m-auto animate-bounce " />
-                                                                            <form action="">
-                                                                                <h1 className="font-semibold text-lg">Bạn có chắc chắn muốn mở hội đồng này?</h1>
-                                                                                <p>Khi hội đồng được mở giảng viên có thể chấm điểm cho khóa luận!</p>
-                                                                                <div className="grid grid-cols-2 mt-2">
-                                                                                    <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => setLockModal(false)}>Đóng</button>
-                                                                                    <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { setLock(true); setLockModal(false); notify('Đã mở khóa hội đồng!'); }}>Lưu lại</button>
-                                                                                </div>
-                                                                            </form>
+                                                                            <h1 className="font-semibold text-lg">Bạn có chắc chắn muốn mở hội đồng này?</h1>
+                                                                            <p>Khi hội đồng được mở giảng viên có thể chấm điểm cho khóa luận!</p>
+                                                                            <div className="grid grid-cols-2 mt-2">
+                                                                                <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => { setUpdateStatus({}); setLockModal(false) }}>Đóng</button>
+                                                                                <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { updateCouncilStatus(updateStatus.id, updateStatus.status); setLockModal(false); }}>Lưu lại</button>
+                                                                            </div>
                                                                         </Modal>
                                                                     </div>
                                                                 )
                                                                 :
                                                                 (
                                                                     <div>
-                                                                        <button onClick={() => setLockModal(true)} className="bg-green-700 hover:bg-green-500 p-2 mr-2 text-white rounded-sm"><FaLockOpen /></button>
+                                                                        <button onClick={() => { setUpdateStatus({ id: e.id, status: !e.status }); setLockModal(true) }} className="bg-green-700 hover:bg-green-500 p-2 mr-2 text-white rounded-sm"><FaLockOpen /></button>
                                                                         <Modal isVisible={lockModal}>
                                                                             <BsExclamationOctagonFill className="text-4xl text-yellow-400 m-auto animate-bounce " />
-                                                                            <form action="">
-                                                                                <h1 className="font-semibold text-lg">Bạn có chắc chắn muốn khóa hội đồng này?</h1>
-                                                                                <p>Khi hội đồng sau khi khóa giảng viên <b>không</b> thể chấm điểm cho khóa luận!</p>
-                                                                                <div className="grid grid-cols-2 mt-2">
-                                                                                    <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => setLockModal(false)}>Đóng</button>
-                                                                                    <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { setLock(false); setLockModal(false); notify('Đã khóa hội đồng!'); }}>Lưu lại</button>
-                                                                                </div>
-                                                                            </form>
+
+                                                                            <h1 className="font-semibold text-lg">Bạn có chắc chắn muốn khóa hội đồng này?</h1>
+                                                                            <p>Khi hội đồng sau khi khóa giảng viên <b>không</b> thể chấm điểm cho khóa luận!</p>
+                                                                            <div className="grid grid-cols-2 mt-2">
+                                                                                <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => { setUpdateStatus({}); setLockModal(false); }}>Đóng</button>
+                                                                                <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { updateCouncilStatus(updateStatus.id, updateStatus.status); setLockModal(false); }}>Lưu lại</button>
+                                                                            </div>
+
                                                                         </Modal>
                                                                     </div>
                                                                 )}
                                                         </div>
                                                         <div>
-                                                            <button className="bg-green-700 hover:bg-green-500 mr-2 p-2 text-white rounded-sm"><BiEdit /></button>
-
+                                                            <button
+                                                                className="bg-green-700 hover:bg-green-500 mr-2 p-2 text-white rounded-sm"
+                                                                onClick={() => { setIdEditCouncil(e.id); setEditCouncil(true); }}><BiEdit />
+                                                            </button>
                                                         </div>
                                                         <div>
                                                             <button onClick={() => CouncilDetail()} className="bg-sky-700 hover:bg-sky-500 mr-2 p-2 text-white rounded-sm"><AiOutlineEye /></button>
                                                         </div>
                                                         <div>
-                                                            <button onClick={() => setRemove(true)} className="bg-red-700 hover:bg-red-500 p-2 mr-2 text-white rounded-sm"><BsFillTrashFill /></button>
+                                                            <button onClick={() => { setIdRemoveCouncil(e.id); setRemove(true);}} className="bg-red-700 hover:bg-red-500 p-2 mr-2 text-white rounded-sm"><BsFillTrashFill /></button>
                                                             <Modal isVisible={remove}>
                                                                 <BsExclamationOctagonFill className="text-4xl text-yellow-400 m-auto animate-bounce " />
                                                                 <form action="">
                                                                     <h1 className="font-semibold text-lg">Bạn có chắc chắn muốn xóa hội đồng này?</h1>
                                                                     <p>Khi hội đồng sau khi xoá các thông tin liên quan đến hội đồng đều mất!</p>
                                                                     <div className="grid grid-cols-2 mt-2">
-                                                                        <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => setRemove(false)}>Đóng</button>
-                                                                        <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { setRemove(false);  notify('Đã xóa hội đồng!'); }}>Lưu lại</button>
+                                                                        <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => { setIdRemoveCouncil(0); setRemove(false);}}>Đóng</button>
+                                                                        <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { deleteOneCouncil(); setRemove(false); }}>Lưu lại</button>
                                                                     </div>
                                                                 </form>
                                                             </Modal>
@@ -300,11 +466,71 @@ const CouncilListPage = () => {
                                         }
                                     </tbody>
                                 </table>
+                                <div className="flex justify-center mt-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => handlePageChange(page - 1)}
+                                        disabled={page === 1}
+                                        className="p-2 border-2 border-r-0 border-indigo-600 hover:bg-indigo-600 hover:text-white">
+                                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M17.77 3.77L16 2 6 12l10 10 1.77-1.77L9.54 12z"></path></svg>
+                                    </button>
+                                    <Paginate
+                                        currentPage={page}
+                                        totalPages={totalPages.lastPage}
+                                        onPageChange={handlePageChange}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => handlePageChange(page + 1)}
+                                        disabled={page === totalPages.lastPage}
+                                        className="p-2 border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white">
+                                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M6.23 20.23L8 22l10-10L8 2 6.23 3.77 14.46 12z"></path></svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <Modal isVisible={editCouncil}>
+                <div className="text-left w-100">
+                    <h3 className="text-2xl font-semibold text-red-700">Tạo hội đồng</h3>
+                    <div className="p-2">
+                        <h4 className="text-md font-semibold">Giờ bắt đầu</h4>
+                        <input
+                            type="time"
+                            className="w-full border-2 p-2 border-slate-400 rounded-sm mt-2"
+                            defaultValue={editOne.timeStart}
+                           onChange={(e) => setUpdateData({ ...updateData, timeStart: e.target.value })} 
+                            />
+                    </div>
+
+                    <div className="p-2">
+                        <h4 className="text-md font-semibold">Giờ kết thúc </h4>
+                        <input
+                            type="time"
+                            className="w-full border-2 p-2 border-slate-400 rounded-sm mt-2"
+                            defaultValue={editOne?.timeEnd}
+                           onChange={(e) => setUpdateData({ ...updateData, timeEnd: e.target.value })} 
+                           />
+                    </div>
+
+                    <div className="p-2">
+                        <h4 className="text-md font-semibold">Ngày diễn ra </h4>
+                        <input
+                            type="date"
+                            className="w-full border-2 p-2 border-slate-400 rounded-sm mt-2"
+                            defaultValue={editOne?.startDate}
+                           onChange={(e) => setUpdateData({ ...updateData, startDate: e.target.value })} 
+                            />
+                    </div>
+                    <div className="grid grid-cols-2 mt-2">
+                        <button className=" mx-2 py-2 bg-gray-500 text-white rounded " onClick={() => { setEditOne([]); setIdEditCouncil(0); setEditCouncil(false);}}>Đóng</button>
+                        <button className=" mx-2 py-2 bg-green-600 text-white rounded " onClick={() => { updateInfCouncil()}}   >Lưu lại</button>
+                    </div>
+
+                </div>
+            </Modal>
         </div>
     );
 }

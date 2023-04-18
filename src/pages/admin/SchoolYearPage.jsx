@@ -15,10 +15,10 @@ const SchoolYearPage = () => {
     const [addModal, setAddModal] = useState(false);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [data, setData] = useState(1);
+    const [data, setData] = useState([]);
     const [newSemester, setNewSemester] = useState({ year: "", semester: "", startDate: "", endDate: "" });
     const [idRemoveSemester, setIdRemoveSemester] = useState(0);
-    const [idEditSemester, setIdEditSemester] = useState();
+    const [idEditSemester, setIdEditSemester] = useState(0);
     const [detailSemester, setDetailSemester] = useState({});
     const [updateSemester, setUpdateSemester] = useState({ year: "", semester: "", startDate: "", endDate: "" }) 
 

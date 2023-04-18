@@ -59,12 +59,16 @@ const TeacherLeftDashboard = () => {
                                         <div className="mt-2 mx-2 font-semibold text-xl">Danh sách sinh viên</div>
                                     </Link>
                                 </li>
-                                <li className=" text-white font-semibold text-xl hover:bg-blue-900">
+                               {
+                                (role === "TK") && (
+                                    <li className=" text-white font-semibold text-xl hover:bg-blue-900">
                                     <Link to="/admin/list/gradeI" className="flex mx-5 py-2">
                                         <div className="mt-2 mx-2 font-semibold text-3xl"><HiDocumentText /></div>
                                         <div className="mt-2 mx-2 font-semibold text-xl">Danh sách sinh viên xin điểm i</div>
                                     </Link>
                                 </li>
+                                ) 
+                               }
                                 <li className=" text-white font-semibold text-xl  hover:cursor-pointer">
                                     <div className="flex px-5 py-2 hover:bg-blue-900" >
                                         <div className="mt-2 mx-2 font-semibold text-3xl"><MdTopic /></div>

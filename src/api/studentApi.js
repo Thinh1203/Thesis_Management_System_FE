@@ -11,11 +11,11 @@ export const changePassword = async (password, navigate) => {
         const result = await instance.patch("/student/changePassword", password, { headers });
         if(result.data.statusCode !== 200) return toast.error(result.data.message);
         localStorage.removeItem("token");
+        toast.success(result.data.message, {autoClose: 2000});
         setTimeout(() => {
             navigate("/login");
         }, 3000)
-        return toast.success(result.data.message, {autoClose: 2000});
-
+        return;
     } catch (error) {
         if (error.response && error.response.data && error.response.data.message) {
             toast.error(error.response.data.message);
