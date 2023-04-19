@@ -1,24 +1,22 @@
 import instance from "../utils/instance";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import jwt_decode from 'jwt-decode';
 
-export const changePassword = async (password, navigate) => {
+export const changePassword = async (password) => {
     try {
         const token = localStorage.getItem("token");
         const headers = {
             'Authorization': `Bearer ${token}`
         };
-        const result = await instance.patch("/student/changePassword", password, { headers });
-        if(result.data.statusCode !== 200) return toast.error(result.data.message);
-        localStorage.removeItem("token");
-        toast.success(result.data.message, {autoClose: 2000});
-        setTimeout(() => {
-            navigate("/login");
-        }, 3000)
-        return;
+    
+        const decodedToken = jwt_decode(token);
+        const { id } = decodedToken;
+        const result = await instance.patch(`/student/changePassword/${id}`, password, { headers });    
+        return result.data;
     } catch (error) {
         if (error.response && error.response.data && error.response.data.message) {
-            toast.error(error.response.data.message);
+            return toast.error(error.response.data.message);
         }
     }
 }

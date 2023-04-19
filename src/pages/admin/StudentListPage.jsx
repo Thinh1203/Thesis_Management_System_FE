@@ -43,8 +43,9 @@ const StudentListPage = () => {
             setUser(res.data);
             setTotalPages(res);
         }
+       
         getAll();
-    }, [page, user]);
+    }, [page]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -192,12 +193,14 @@ const StudentListPage = () => {
                 if (removeQuery.statusCode === 200) {
                     setResults(removeQuery.data);
                     setTotalPagesQuery(removeQuery);
+                    setRemoveAccountModal(false)
                     return setSearchData(true);
                 } else {
                     console.log(page);
                     removeQuery = await search(query, pageQuery - 1);
                     setResults(removeQuery.data);
                     setTotalPagesQuery(removeQuery)
+                    setRemoveAccountModal(false)
                     return setSearchData(false);
                 }
             }
@@ -330,7 +333,7 @@ const StudentListPage = () => {
                             }
                             {(query && !searchData) && (<div className=" table-auto w-ful grid grid-cols-11 border-b-2 border-b-slate-300 rounded-sm text-center"><h1 className="text-red-700 text-2xl font-semibold col-span-11 py-2">Không tìm thấy!</h1></div>)}
                             {
-                                (!query) && (user.map((e) => (
+                                (!query) && (user?.map((e) => (
                                     <div key={e.id} className="table-auto w-ful grid grid-cols-9 border-b-2 border-b-slate-300 rounded-sm text-center">
                                         <div className="border-r-2 border-slate-300 py-1">{e.account}</div>
                                         <div className="border-r-2 col-span-2 border-slate-300 py-1">{e.email}</div>

@@ -318,7 +318,7 @@ const TeacherListPage = () => {
                             {(query && results.length < 1) && (<div className=" table-auto w-ful grid grid-cols-11 border-b-2 border-b-slate-300 rounded-sm text-center"><h1 className="text-red-700 text-2xl font-semibold col-span-11 py-2">Không tìm thấy!</h1></div>)}
 
 
-                            {!query && (user.map((e) => (
+                            {!query && (user?.map((e) => (
                                 <div key={e.id} className=" table-auto w-ful grid grid-cols-12 border-b-2 border-b-slate-300 rounded-sm text-center">
                                     <div className="border-r-2 border-slate-300 py-1">{e.account}</div>
                                     <div className="border-r-2 col-span-3 border-slate-300 py-1 ">{e.email}</div>

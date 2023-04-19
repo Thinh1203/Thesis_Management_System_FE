@@ -1,6 +1,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DropDown from "../../components/DropDown";
 import React, { useState } from "react";
@@ -10,14 +11,25 @@ import { AiFillHome, AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { changePassword } from '../../api/studentApi';
 const StudentChangePassword = () => {
     const navigate = useNavigate();
-    const handleSubmit = (e) => {
+    const handleSubmit =  async (e) => {
         e.preventDefault();
         const password = {
             oldPassword: oldPassword,
             newPassword: newPassword,
             confirmPassword: confirmPassword
         };
-        changePassword(password, navigate);
+        const res = await changePassword(password);
+
+        if (res.statusCode === 200) {
+            toast.success('Đổi mật khẩu thành công!', { autoClose: 2000 });
+            localStorage.removeItem("token");
+            setTimeout(() => {
+                navigate("/login");
+            }, 3000);
+        } else {
+            toast.error(res.message);
+        }
+
     }
 
 
@@ -34,7 +46,7 @@ const StudentChangePassword = () => {
     const togglePasswordVisibility1 = () => setShowOldPassword(!showOldPassword);
     const togglePasswordVisibility2 = () => setShowNewPassword(!showNewPassword);
     const togglePasswordVisibility3 = () => setShowConfirmPassword(!showConfirmPassword);
-    
+
 
     return (
         <div className="grid grid-rows-6">

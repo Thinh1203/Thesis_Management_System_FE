@@ -52,11 +52,11 @@ const CouncilListPage = () => {
         timeStart: "", timeEnd: "", startDate: ""
     });
     const [idRemoveCouncil, setIdRemoveCouncil] = useState(0);
-    const [idDetailCouncil, setIdDetailCouncil] = useState(0);
+    // const [idDetailCouncil, setIdDetailCouncil] = useState(0);
 
     const navigate = useNavigate();
-    const CouncilDetail = () => navigate("/admin/council/detail");
 
+    
     useEffect(() => {
         const fetchData = async () => {
             const res = await getAllTeacher();
@@ -72,6 +72,7 @@ const CouncilListPage = () => {
         };
         fetchData();
     }, []);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -153,7 +154,6 @@ const CouncilListPage = () => {
         }
     };
     
-
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!newCouncil.code) return toast.error("Vui lòng nhập mã hội đồng!");
@@ -237,15 +237,6 @@ const CouncilListPage = () => {
                             <span className="flex"><p className="ml-4 mr-2 font-medium text-md">Trang chủ &#62;</p>  <p className="text-md text-blue-800 font-semibold">Danh sách hội đồng</p></span>
                         </div>
                         <div className="rounded-xl h-full shadow-lg shadow-slate-400 py-4 mx-4">
-                            <div className="ml-4">
-                                <input className="border-2 border-slate-400 p-1 w-1/3 rounded-md outline-none" type="text" placeholder="Mã hội đồng" />
-                                {/* 
-                                <select className="border-2 border-slate-400 rounded-sm py-1 px-2 ml-5" name="" id="" value="">
-                                    <option value="">Mặc định</option>
-                                    <option value="true">Đang mở</option>
-                                    <option value="false">Đang khóa</option>
-                                </select> */}
-                            </div>
                             <div className="grid grid-cols-2">
                                 <div className="ml-4">
                                     <h3 className="text-blue-700 text-lg font-semibold">Danh sách hội đồng</h3>
@@ -444,7 +435,7 @@ const CouncilListPage = () => {
                                                             </button>
                                                         </div>
                                                         <div>
-                                                            <button onClick={() => CouncilDetail()} className="bg-sky-700 hover:bg-sky-500 mr-2 p-2 text-white rounded-sm"><AiOutlineEye /></button>
+                                                            <button onClick={() => navigate("/admin/council/detail", {state: e.id})} className="bg-sky-700 hover:bg-sky-500 mr-2 p-2 text-white rounded-sm"><AiOutlineEye /></button>
                                                         </div>
                                                         <div>
                                                             <button onClick={() => { setIdRemoveCouncil(e.id); setRemove(true);}} className="bg-red-700 hover:bg-red-500 p-2 mr-2 text-white rounded-sm"><BsFillTrashFill /></button>

@@ -4,13 +4,91 @@ import { BiExport, BiEdit } from "react-icons/bi";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { BsFillTrashFill, BsExclamationOctagonFill } from "react-icons/bs";
 import Modal from "../../components/Modal";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { getListThesis, addNewThesis } from "../../api/adminApi/thesis";
+import { getListTopic } from "../../api/adminApi/topic";
+import { getAllStudent } from "../../api/adminApi/studentPage";
+import { getAllTeacher } from "../../api/adminApi/teacherPage";
+import { getAll, getAllCouncil } from "../../api/adminApi/council";
+import { getListSemester } from "../../api/adminApi/schoolYearPage";
+import Paginate from "../../components/Paginate";
+
 const ProcessingTopicPage = () => {
     const [editThesis, setEditThesis] = useState(false);
     const [removeThesis, setRemoveThesis] = useState(false);
     const [addThesis, setAddThesis] = useState(false);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [data, setData] = useState([]);
+    const [listTopic, setListTopic] = useState([]);
+    const [listStudent, setListStudent] = useState([]);
+    const [listTeacher, setListTeacher] = useState([]);
+    const [listCouncil, setListCouncil] = useState([]);
+    const [listSemester, setListSemester] = useState([])
+    const [newThesis, setNewThesis] = useState({
+        topicId: "", studentId: "", lecturerId: "", councilId: "", schoolYearId: "", endDate: ""
+    });
+
+    useEffect(() => {
+        const getAll = async () => {
+            const res = await getListThesis(page);
+            setData(res.data);
+            setTotalPages(res);
+        }
+        getAll();
+    }, [page]);
+
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages.lastPage) {
+            setPage(newPage);
+        }
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getListTopic();
+            setListTopic(res);
+        };
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getAllStudent();
+            setListStudent(res);
+
+        };
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getAllTeacher();
+            setListTeacher(res);
+
+        };
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getListSemester();
+            setListSemester(res);
+        };
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getAllCouncil();;
+            setListCouncil(res);
+
+        };
+        fetchData();
+    }, []);
+
     const notify = (text) => {
         toast.success(text, {
             position: "top-center",
@@ -23,6 +101,29 @@ const ProcessingTopicPage = () => {
             theme: "light",
         });
     }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!newThesis.topicId) return toast.error("Vui lòng chọn đề tài!");
+        if (!newThesis.studentId) return toast.error("Vui lòng chọn sinh viên!");
+        if (!newThesis.lecturerId) return toast.error("Vui lòng chọn giảng viên hướng dẫn!");
+        if (!newThesis.councilId) return toast.error("Vui lòng chọn hội đồng bảo vệ!");
+        if (!newThesis.endDate) return toast.error("Hạn nộp báo cáo không được trống!");
+        if (!newThesis.schoolYearId) return toast.error("Niên khóa không được để trống!");
+        const fetchApi = async () => {
+            const res = await addNewThesis(newThesis);
+            if (res.data.statusCode !== 200)
+                return toast.error(res.data.message);
+            toast.success("Đã thêm đề tài vào hội đồng!");
+            setAddThesis(false);
+            const newRes = await getAll(page);
+            setData(newRes.data);
+            setTotalPages(newRes);
+
+        }
+        fetchApi();
+    };
+
     return (
         <div>
             <div className="flex">
@@ -53,7 +154,7 @@ const ProcessingTopicPage = () => {
 
                                 </div>
                                 <ToastContainer
-                                    position="top-center"
+                                    position="top-right"
                                     autoClose={1000}
                                     hideProgressBar={false}
                                     newestOnTop={false}
@@ -65,67 +166,145 @@ const ProcessingTopicPage = () => {
                                     theme="light"
                                 />
                             </div>
-                            <div class="table-auto w-full border-t-2 border-b-2 grid grid-cols-12 border-y-slate-300 rounded-sm mt-2  text-center font-semibold">
+                            <div className="table-auto w-full border-t-2 border-b-2 grid grid-cols-11 border-y-slate-300 rounded-sm mt-2  text-center font-semibold">
                                 <div className="border-r-2 border-slate-300 py-1">Mã đề tài</div>
                                 <div className="border-r-2 col-span-2 border-slate-300 py-1">Tên đề tài</div>
                                 <div className="col-span-2 border-r-2 border-slate-300 py-1">Tên tiếng Anh</div>
                                 <div className="py-1 border-r-2 border-slate-300">Sinh viên thực hiện</div>
                                 <div className="py-1 border-r-2 border-slate-300">Giảng viên hướng dẫn</div>
-                                <div className="py-1 border-r-2 border-slate-300">Ngày bắt đầu</div>
-                                <div className="py-1 border-r-2 border-slate-300">Ngày kết thúc</div>
+                                <div className="py-1 border-r-2 border-slate-300">Hạn nộp báo cáo</div>
+                                <div className="py-1 border-r-2 border-slate-300">Mã hội đồng</div>
                                 <div className="py-1 border-r-2 border-slate-300">Niên khóa</div>
-                                <div className="py-1 border-r-2 border-slate-300">Học kỳ</div>
                                 <div className="py-1 ">Hành động</div>
                             </div>
-                            <div class="table-auto w-full border-b-2 grid grid-cols-12 border-y-slate-300 rounded-sm  font-normal">
-                                <div className="border-r-2 ml-2 border-slate-300 py-1">Mã đề tài</div>
-                                <div className="border-r-2 ml-2 col-span-2 border-slate-300 py-1">Tên đề tài</div>
-                                <div className="col-span-2 ml-2 border-r-2 border-slate-300 py-1">Tên tiếng Anh</div>
-                                <div className="py-1 ml-2 border-r-2 border-slate-300">Sinh viên thực hiện</div>
-                                <div className="py-1 ml-2 border-r-2 border-slate-300">Giảng viên hướng dẫn</div>
-                                <div className="py-1 ml-2 border-r-2 border-slate-300">Ngày bắt đầu</div>
-                                <div className="py-1 ml-2 border-r-2 border-slate-300">Ngày kết thúc</div>
-                                <div className="py-1 ml-2 border-r-2 border-slate-300">Niên khóa</div>
-                                <div className="py-1 ml-2 border-r-2 border-slate-300 text-center">1</div>
-                                <div className="py-1 text-center">
-                                    <button onClick={() => setEditThesis(true)} className="text-white bg-blue-700 rounded-sm hover:bg-blue-500 p-1 mr-1"><BiEdit /></button>
-                                    <button onClick={() => setRemoveThesis(true)} className="text-white bg-red-700 rounded-sm hover:bg-red-500  p-1 mr-1"><BsFillTrashFill /></button>
-
-                                </div>
+                            <div className="table-auto w-full border-b-2 grid grid-cols-11 border-y-slate-300 rounded-sm  font-normal">
+                                {
+                                    data?.map(e => (
+                                        <React.Fragment key={e.id}>
+                                            <div className="border-r-2 ml-2 border-slate-300 py-1 text-center">{e.topic.code}</div>
+                                            <div className="border-r-2 ml-2 col-span-2 border-slate-300 py-1">{e.topic.VietnameseName}</div>
+                                            <div className="col-span-2 ml-2 border-r-2 border-slate-300 py-1">{e.topic.EnglishName}</div>
+                                            <div className="py-1 ml-2 border-r-2 border-slate-300">{e.student.fullName}</div>
+                                            <div className="py-1 ml-2 border-r-2 border-slate-300">{e.teacher.fullName}</div>
+                                            <div className="py-1 ml-2 border-r-2 border-slate-300 text-center">{new Date(e.endDate).toLocaleDateString('en-GB')}</div>
+                                            <div className="py-1 ml-2 border-r-2 border-slate-300 text-center">{e.council.code}</div>
+                                            <div className="py-1 ml-2 border-r-2 border-slate-300 text-center"><p>{e.shoolYear.year}</p><p>Học kỳ - {e.shoolYear.semester}</p></div>
+                                            <div className="py-1 text-center">
+                                                <button onClick={() => setEditThesis(true)} className="text-white bg-blue-700 rounded-sm hover:bg-blue-500 p-1 mr-1"><BiEdit /></button>
+                                                <button onClick={() => setRemoveThesis(true)} className="text-white bg-red-700 rounded-sm hover:bg-red-500  p-1 mr-1"><BsFillTrashFill /></button>
+                                            </div>
+                                        </React.Fragment>
+                                    ))
+                                }
+                            </div>
+                            <div className="flex justify-center align-middle mt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => handlePageChange(page - 1)}
+                                    disabled={page === 1}
+                                    className="p-2 border-2 border-r-0 border-indigo-600 hover:bg-indigo-600 hover:text-white">
+                                    <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M17.77 3.77L16 2 6 12l10 10 1.77-1.77L9.54 12z"></path></svg>
+                                </button>
+                                <Paginate
+                                    currentPage={page}
+                                    totalPages={totalPages.lastPage}
+                                    onPageChange={handlePageChange}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => handlePageChange(page + 1)}
+                                    disabled={page === totalPages.lastPage}
+                                    className="p-2 border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white">
+                                    <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M6.23 20.23L8 22l10-10L8 2 6.23 3.77 14.46 12z"></path></svg>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <Modal isVisible={addThesis}>
-                <form action="">
-                    <h1 className="font-bold text-xl px-2 pb-2">Thêm khóa luận</h1>
-                    <hr className=" border border-slate-300" />
-                    <div className="grid grid-cols-3">
-                        <div className="grid grid-rows-3 p-4">
-                            <div className="font-semibold mt-1">Mã đề tài<span className="text-red-700 font-semibold">(*)</span></div>
-                            <div className="font-semibold mt-1">Tên đề tài<span className="text-red-700 font-semibold">(*)</span></div>
-                            <div className="font-semibold mt-1">Tên tiếng anh<span className="text-red-700 font-semibold">(*)</span></div>
-                        </div>
-                        <div className="col-span-2 py-4 px-2">
-                            <div className="grid grid-rows-3">
-                                <div className="mt-1">
-                                    <input className="w-full  border border-slate-400 rounded-sm" type="text" />
-                                </div>
-                                <div className="mt-1">
-                                    <input className="w-full  border border-slate-400 rounded-sm" type="text" />
-                                </div>
-                                <div className="mt-1">
-                                    <input className="w-full  border border-slate-400 rounded-sm" type="text" />
-                                </div>
-                            </div>
-                        </div>
+                <div className="text-left w-100">
+                    <h3 className="text-2xl font-semibold text-red-700">Thêm khóa luận</h3>
+                    <div className="p-2">
+                        <h4 className="text-md font-semibold">Tên đề tài</h4>
+                        <select
+                            onChange={(e) => setNewThesis({ ...newThesis, topicId: e.target.value })}
+                            className="border-2 w-full border-zinc-500 rounded-sm p-1 my-1">
+                            {
+                                listTopic?.map(e => (
+                                    <option key={e.id} value={e.id}>{e.VietnameseName}</option>
+                                ))
+                            }
+                        </select>
                     </div>
+
+                    <div className="p-2">
+                        <h4 className="text-md font-semibold">Sinh viên thực hiện</h4>
+                        <select
+                            onChange={(e) => setNewThesis({ ...newThesis, studentId: e.target.value })}
+                            className="border-2 w-full border-zinc-500 rounded-sm p-1 my-1">
+                            {
+                                listStudent?.map(e => (
+                                    <option key={e.id} value={e.id}>{e.fullName}</option>
+                                ))
+                            }
+                        </select>
+                    </div>
+
+                    <div className="p-2">
+                        <h4 className="text-md font-semibold">Giảng viên hướng dẫn </h4>
+                        <select
+                            onChange={(e) => setNewThesis({ ...newThesis, lecturerId: e.target.value })}
+                            className="border-2 w-full border-zinc-500 rounded-sm p-1 my-1">
+                            {
+                                listTeacher?.map(e => (
+                                    <option key={e.id} value={e.id}>{e.fullName}</option>
+                                ))
+                            }
+                        </select>
+                    </div>
+
+                    <div className="p-2">
+                        <h4 className="text-md font-semibold">Hạn nộp báo cáo</h4>
+                        <input
+                            type="date"
+                            className="w-full border-2 p-1 border-slate-400 rounded-sm mt-2"
+                            onChange={(e) => setNewThesis({ ...newThesis, endDate: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="p-2">
+                        <h4 className="text-md font-semibold">Hội đồng bảo vệ</h4>
+                        <select
+                            onChange={(e) => setNewThesis({ ...newThesis, councilId: e.target.value })}
+                            className="w-full border-2 p-1 border-slate-400 rounded-sm mt-2">
+                            {
+                                listCouncil?.map(e => (
+                                    <option key={e.id} value={e.id}>{e.code}</option>
+                                ))
+                            }
+                        </select>
+                    </div>
+
+                    <div className="p-2">
+                        <h4 className="text-md font-semibold">Niên khóa</h4>
+                        <select
+                            onChange={(e) => setNewThesis({ ...newThesis, schoolYearId: e.target.value })}
+                            className="w-full border-2 p-1 border-slate-400 rounded-sm mt-2">
+                            {
+                                listSemester?.map(e => (
+                                    <option key={e.id} value={e.id}>{e.year} - Học kỳ: {e.semester}</option>
+                                ))
+                            }
+                        </select>
+                    </div>
+
                     <div className="grid grid-cols-2 mt-2">
-                        <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => setAddThesis(false)}>Đóng</button>
-                        <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { setAddThesis(false); notify('Thêm khóa luận thành công!'); }}>Lưu lại</button>
+                        <button className=" mx-2 py-2 bg-gray-500 text-white rounded " onClick={() => { setNewThesis({ topicId: "", studentId: "", lecturerId: "", councilId: "", endDate: "" }); setAddThesis(false); }}>Đóng</button>
+                        <button className=" mx-2 py-2 bg-green-600 text-white rounded " onClick={(e) => {handleSubmit(e)}}>Lưu lại</button>
                     </div>
-                </form>
+
+                </div>
             </Modal >
             <Modal isVisible={editThesis}>
                 <form action="">
@@ -160,7 +339,7 @@ const ProcessingTopicPage = () => {
             <Modal isVisible={removeThesis}>
                 <BsExclamationOctagonFill className="text-4xl text-yellow-400 m-auto animate-bounce " />
                 <form action="">
-                    <h1 className="font-semibold text-lg text-center">Bạn có chắc chắn muốn xóa khóa luận này?</h1> 
+                    <h1 className="font-semibold text-lg text-center">Bạn có chắc chắn muốn xóa khóa luận này?</h1>
                     <div className="grid grid-cols-2 mt-2">
                         <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => setRemoveThesis(false)}>Đóng</button>
                         <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { setRemoveThesis(false); notify('Đã xóa đề tài!'); }}>Lưu lại</button>

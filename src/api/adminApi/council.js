@@ -107,3 +107,28 @@ export const deleteOne = async (id) => {
     }
 }
 
+export const getAllCouncil = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get("/council/getListCouncil", { headers });
+        return res.data;
+    } catch (error) {
+        return (error);
+    }
+}
+
+export const getOneCouncil = async (id) => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get(`/council/getOne/${id}`, { headers });
+        return res.data;
+    } catch (error) {
+        return (error);
+    }
+}

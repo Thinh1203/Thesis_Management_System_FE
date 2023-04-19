@@ -123,3 +123,16 @@ export const updateTeacherInformation = async (id, data) => {
         return (error);
     }
 }
+
+export const getAllTeacher = async (id, data) => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get("/teacher/getListTeacher" ,{ headers });
+        return res.data;
+    } catch (error) {
+        return (error);
+    }
+}

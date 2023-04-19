@@ -66,3 +66,29 @@ export const getOne = async (id) => {
         return (error);
     }
 }
+
+export const getAllSemester = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get("/schoolYear/getAllSemester" ,{ headers });
+        return res.data;
+    } catch (error) {
+        return (error);
+    }
+}
+
+export const getListSemester = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get("/schoolYear/getListSemester" ,{ headers });
+        return res.data;
+    } catch (error) {
+        return (error);
+    }
+}

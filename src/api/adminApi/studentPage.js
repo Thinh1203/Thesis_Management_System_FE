@@ -122,3 +122,17 @@ export const updateStudentInformation = async (id, data) => {
         return (error);
     }
 }
+
+
+export const getAllStudent = async (id, data) => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get("/student/getListStudent" ,{ headers });
+        return res.data;
+    } catch (error) {
+        return (error);
+    }
+}
