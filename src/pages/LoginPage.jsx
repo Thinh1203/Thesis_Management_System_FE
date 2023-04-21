@@ -35,7 +35,7 @@ const LoginPage = () => {
                     </h1>
                     <form className="mt-6" >
                         <div className="mb-2">
-                            <label htmlFor="account" className="text-gray-800">
+                            <label htmlFor="account" className="text-gray-800 font-semibold">
                                 Tài khoản
                             </label>
                             <input
@@ -46,7 +46,7 @@ const LoginPage = () => {
                             />
                         </div>
                         <div className="mb-2 relative">
-                            <label htmlFor="password" className=" text-gray-800">
+                            <label htmlFor="password" className=" text-gray-800 font-semibold">
                                 Mật khẩu
                             </label>
                             <input

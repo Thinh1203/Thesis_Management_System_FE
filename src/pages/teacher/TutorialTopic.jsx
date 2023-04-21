@@ -1,7 +1,19 @@
 import React, { useState } from "react";
 import DropDown from "../../components/DropDown";
 import TeacherLeftDashboard from "../../components/TeacherLeftDashboard";
+import { ListOfGuidedTopics } from "../../api/teacherApi";
+import empty_box from "../../assets/image/empty_box.png";
 const TutorialTopic = () => {
+    const token = localStorage.getItem('token');
+    const [listTopic, setListTopic] = useState([]);
+    useState(() => {
+        const fetchApi = async () => {
+            const res = await ListOfGuidedTopics(token);
+            setListTopic(res.data);
+        };
+        fetchApi();
+    }, []);
+
     const topic = [
         {
             "id": 1,
@@ -97,31 +109,37 @@ const TutorialTopic = () => {
                             <span className="flex"><p className="ml-4 mr-2 font-medium text-md">Trang chủ &#62;</p>  <p className="text-md text-blue-800 font-semibold">Danh sách đề tài đang hướng dẫn</p></span>
                         </div>
                         <div className="border-2 rounded-xl mx-5 my-5 shadow-lg shadow-slate-400">
-                            <div className="grid grid-cols-10 mt-10 text-left font-semibold text-sm">
+                            <div className="grid grid-cols-11 mt-10 text-center font-semibold text-sm">
                                 <div className="mx-2 text-center">Mã đề tài</div>
-                                <div className="text-left col-span-2">Tên đề tài</div>
-                                <div className="text-left col-span-2">Tên tiếng anh</div>
-                                {/* <div className="text-center">Ngành</div> */}
-                                <div >Sinh viên thực hiện</div>
-                                <div>Thời gian bắt đầu</div>
-                                <div>Thời gian kết thúc</div>
+                                <div className="text-center col-span-2">Tên đề tài</div>
+                                <div className="text-center col-span-2">Tên tiếng anh</div>
+                                <div className="col-span-2">Sinh viên thực hiện</div>
+                                <div className="text-center">Hạn nộp báo cáo</div>
                                 <div className="text-center">Niên khóa</div>
-                                <div>Trạng thái tập tin</div>
+                                <div className="text-center">Học kỳ</div>
+                                <div className="text-center">Trạng thái tập tin</div>
                             </div>
-                            <div className="pb-2 pt-2 grid grid-cols-10 text-left font-normal text-sm ">
-                                {topic.map((e, index) => (
-                                    <React.Fragment key={e.id}>
-                                        <div className="mx-2 text-center">{e.code}</div>
-                                        <div className="col-span-2">{e.name}</div>
-                                        <div className="text-left col-span-2">{e.englishName}</div>
-                                        {/* <div className="text-center">{e.major}</div> */}
-                                        <div >{e.author}</div>
-                                        <div className="px-2">{e.startDate}</div>
-                                        <div>{e.endDate}</div>
-                                        <div className="text-center">{e.courses}</div>
-                                        <div>{(!e.file) ? (<p className="text-red-600 font-semibold">Chưa nộp</p>) : (<p className="text-green-700 font-semibold">Đã nộp</p>)}</div>
-                                    </React.Fragment>
-                                ))}
+                            <div className="pb-2 pt-2 grid grid-cols-11 font-normal text-sm ">
+                                {
+                                    listTopic && listTopic?.map((e) => (
+                                        <React.Fragment key={e.id}>
+                                            <div className="mx-2 text-center mb-2">{e.topic.code}</div>
+                                            <div className="col-span-2 mb-2">{e.topic.VietnameseName}</div>
+                                            <div className="text-center col-span-2 mb-2">{e.topic.EnglishName}</div>
+                                            <div className="col-span-2 text-center  mb-2">{e.student.fullName}</div>
+                                            <div className="px-2 mb-2 text-center">{new Date(e.endDate).toLocaleDateString('en-GB')}</div>
+                                            <div className="text-center mb-2">{e.shoolYear.year}</div>
+                                            <div className=" text-center mb-2">{e.shoolYear.semester}</div>
+                                            <div className=" text-center mb-2">{(!e.statusile) ? (<p className="text-red-600 font-semibold">Chưa nộp</p>) : (<p className="text-green-700 font-semibold">Đã nộp</p>)}</div>
+                                        </React.Fragment>
+                                    ))}
+                                {
+                                listTopic.length < 1 && (
+                                        <div className="flex justify-center m-auto col-span-11">
+                                            <img className="w-1/4 h-1/4 py-2" src={empty_box} alt="empty_box.png" />
+                                        </div>
+                                    )
+                                }
                             </div>
                         </div>
                     </div>

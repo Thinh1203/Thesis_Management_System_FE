@@ -90,10 +90,10 @@ const SchoolYearPage = () => {
             const res = await getOne(idEditSemester);
             setDetailSemester(res.data);
             setUpdateSemester({
-                year: detailSemester.year,
-                startDate: detailSemester.startDate,
-                endDate: detailSemester.endDate,
-                semester: detailSemester.semester
+                year: detailSemester?.year,
+                startDate: detailSemester?.startDate,
+                endDate: detailSemester?.endDate,
+                semester: detailSemester?.semester
             });
         };
         if (idEditSemester) {

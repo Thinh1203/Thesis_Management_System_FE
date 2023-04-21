@@ -9,7 +9,7 @@ const Header = () => {
         <header>
             <div className="h-52 bg-cover relative" style={{ backgroundImage: `url(${banner})` }}>
                 <div className="absolute text-2xl my-32 mx-80 font-Poppins text-yellow-50 w-1/2">
-                    HỆ THỐNG QUẢN LÝ LUẬN VĂN TỐT NGHIỆP
+                    HỆ THỐNG QUẢN LÝ LUẬN VĂN TỐT NGHIỆP KHOA CNTT
                 </div>
                 <div className="relative">
                     <ul className="flex mx-80 h-52">

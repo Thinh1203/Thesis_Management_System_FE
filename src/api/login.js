@@ -6,6 +6,7 @@ export const login = async (user, navigate) => {
         const token = res.data.token;
         const decodedToken = jwt_decode(token);
         if (decodedToken.role === "SV") navigate("/student/home");
+        else if(decodedToken.role === "GV") navigate("/teacher");
         else navigate("/admin/home");
         localStorage.setItem("token", token);
         return res.response;

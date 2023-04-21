@@ -79,11 +79,11 @@ const StudentListPage = () => {
             const detailUsers = await getOne(idUser);
             setDetailUser(detailUsers);
             setUpdateData({
-                email: detailUsers.email,
-                fullName: detailUsers.fullName,
-                numberPhone: detailUsers.numberPhone,
-                address: detailUsers.address,
-                gender: detailUsers.gender,
+                email: detailUsers?.email,
+                fullName: detailUsers?.fullName,
+                numberPhone: detailUsers?.numberPhone,
+                address: detailUsers?.address,
+                gender: detailUsers?.gender,
             });
         };
         fetchData();

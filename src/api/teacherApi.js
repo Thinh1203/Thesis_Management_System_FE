@@ -35,3 +35,15 @@ export const changePassword = async (id, newPassword, token) => {
         throw (err);
     }
 }
+
+export const ListOfGuidedTopics = async (token) => {
+    try {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get("/theses/ListOfGuidedTopics", { headers });
+        return res.data;
+    } catch (err) {
+        throw (err);
+    }
+}

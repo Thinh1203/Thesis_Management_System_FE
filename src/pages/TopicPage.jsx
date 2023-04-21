@@ -1,169 +1,82 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
-import Pagination from "../components/Pagination";
-import { AiOutlineSearch } from "react-icons/ai";
-import { BiDetail } from "react-icons/bi";
+import Paginate from "../components/Paginate";
+import { getAllListTheses } from "../api/adminApi/thesis";
+import { useNavigate } from "react-router-dom";
+import { BiDetail } from "react-icons/bi"
 const TopicPage = () => {
-    const topic = [
-        {
-            "id": 1,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "author": "Quách Huy Thịnh",
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-        },
-        {
-            "id": 2,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "author": "Quách Huy Thịnh",
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-        },
-        {
-            "id": 3,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "author": "Quách Huy Thịnh",
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-        },
-        {
-            "id": 4,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "author": "Quách Huy Thịnh",
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-        },
-        {
-            "id": 5,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "author": "Quách Huy Thịnh",
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-        },
-        {
-            "id": 6,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "author": "Quách Huy Thịnh",
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-        },
-        {
-            "id": 7,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "author": "Quách Huy Thịnh",
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-        },
-        {
-            "id": 8,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "author": "Quách Huy Thịnh",
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-        },
-        {
-            "id": 9,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "author": "Quách Huy Thịnh",
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-        },
-        {
-            "id": 10,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "author": "Quách Huy Thịnh",
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-        },
-        {
-            "id": 11,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "author": "Quách Huy Thịnh",
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-        },
-        {
-            "id": 12,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "author": "Quách Huy Thịnh",
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-        },
-    ];
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(8);
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = topic.slice(indexOfFirstItem, indexOfLastItem);
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [data, setData] = useState([]);
+    useEffect(() => {
+        const fetchApi = async () => {
+            const res = await getAllListTheses(page);
+            setData(res.data);
+
+            setTotalPages(res);
+        };
+        fetchApi();
+    }, [page]);
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages.lastPage) {
+            setPage(newPage);
+        }
+    };
+    const navigate = useNavigate();
+
+    const detailTopic = async (id) => {
+        navigate("/topicDetail", { state: id });
+    }
     return (
         <div>
             <Header />
             <div className="flex justify-center mt-10 w-full">
-                <form action="" className="flex">
-                    <input className="w-96 border-2 border-slate-400" type="text" placeholder="Tìm kiếm..." />
-                    <button className="p-2 bg-blue-500 text-white text-2xl">
-                        <AiOutlineSearch />
-                    </button>
-                </form>
+                <input className="w-4/12 p-2 rounded-sm border-2 border-slate-500" type="text" placeholder="Tìm kiếm tên đề tài, mã đề tài, sinh viên thực hiện ..." />
             </div>
-
-                <div className="grid grid-cols-8 mt-10 mx-20 text-center font-semibold border-2 border-slate-500">
-                    <div>STT</div>
-                    <div className="col-span-2">Tên đề tài</div>
-                    <div className="col-span-2">Tên tiếng anh</div>
-                    <div>Mã đề tài</div>
-                    <div>Sinh viên thực hiện</div>
-                    <div>Chi tiết</div>
+            <div className="rounded-md border border-slate-500 shadow-md shadow-slate-500 mx-5 mt-3 pb-2">
+                <div className="grid grid-cols-12 mt-10 mx-20 text-center font-semibold border-2 border-slate-500">
+                    <div className="text-lg">Mã đề tài</div>
+                    <div className="col-span-4 text-lg">Tên đề tài</div>
+                    <div className="col-span-4 text-lg">Tên tiếng anh</div>
+                    <div className="text-lg col-span-2">Sinh viên thực hiện</div>
+                    <div className="text-lg">Chi tiết</div>
                 </div>
 
-                <div className="pb-2 grid grid-cols-8 text-center font-normal border-l-2 border-r-2 border-b-2 border-slate-500 mx-20 ">
-                    {currentItems.map((e, index) => (
-                        <React.Fragment key={e.id}>
-                            <div>{index + 1}</div>
-                            <div className="col-span-2">{e.name}</div>
-                            <div className="col-span-2">{e.englishName}</div>
-                            <div>{e.code}</div>
-                            <div>{e.author}</div>
-                            {/* <div>{e.startDate}</div>
-                            <div>{e.endDate}</div> */}
-                            <div className="flex justify-center text-2xl text-blue-800"><Link to="/topicDetail"><BiDetail /></Link></div>
-                        </React.Fragment>
-                    ))}
+                <div className="pb-2 grid grid-cols-12 text-center font-normal border-l-2 border-r-2 border-b-2 border-slate-500 mx-20 ">
+                    {
+                        data && data?.map((e) => (
+                            <React.Fragment key={e.id}>
+                                <div className="my-1">{e.topic.code}</div>
+                                <div className="col-span-4 my-1">{e.topic.VietnameseName}</div>
+                                <div className="col-span-4 my-1">{e.topic.EnglishName}</div>
+                                <div className="col-span-2 my-1">{e.student.fullName}</div>
+                                <div className="flex justify-center text-2xl text-blue-800 my-1"><button onClick={() => detailTopic(e.id)}><BiDetail /></button></div>
+                            </React.Fragment>
+                        ))}
 
-                    <div className="col-span-8 mt-3">
-                        <Pagination
-                            itemsPerPage={itemsPerPage}
-                            totalItems={topic.length}
-                            paginate={paginate}
-                        />
-                    </div>
                 </div>
+                <div className="flex justify-center align-middle my-4 mx-auto">
+                    <button
+                        type="button"
+                        onClick={() => handlePageChange(page - 1)}
+                        disabled={page === 1}
+                        className="p-2 border-2 border-r-0 border-indigo-600 hover:bg-indigo-600 hover:text-white">
+                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M17.77 3.77L16 2 6 12l10 10 1.77-1.77L9.54 12z"></path></svg>
+                    </button>
+                    <Paginate
+                        currentPage={page}
+                        totalPages={totalPages.lastPage}
+                        onPageChange={handlePageChange}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={page === totalPages.lastPage}
+                        className="p-2 border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white">
+                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M6.23 20.23L8 22l10-10L8 2 6.23 3.77 14.46 12z"></path></svg>
+                    </button>
+                </div>
+            </div>
         </div>
 
     );

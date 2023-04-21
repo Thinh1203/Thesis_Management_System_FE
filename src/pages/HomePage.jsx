@@ -1,51 +1,69 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
-import Pagination from "../components/Pagination";
+import Paginate from "../components/Paginate";
+import { getAll } from "../api/adminApi/council";
+import { useNavigate } from "react-router-dom";
 const HomePage = () => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(8);
-    const list = [
-        "Thông báo kế hoạch giảng dạy và đăng ký học phần HK3, 2023-2024",
-        "Thông báo kế hoạch giảng dạy và đăng ký học phần HK2, 2023-2024",
-        "Thông báo kế hoạch giảng dạy và đăng ký học phần HK1, 2023-2024",
-        "Thông báo kế hoạch giảng dạy và đăng ký học phần HK3, 2022-2023",
-        "Thông báo kế hoạch giảng dạy và đăng ký học phần HK2, 2022-2023",
-        "Thông báo kế hoạch giảng dạy và đăng ký học phần HK1, 2022-2023",
-        "Thông báo kế hoạch giảng dạy và đăng ký học phần HK3, 2021-2022",
-        "Thông báo kế hoạch giảng dạy và đăng ký học phần HK2, 2021-2022",
-        "Thông báo kế hoạch giảng dạy và đăng ký học phần HK1, 2021-2022",
-        "Thông báo kế hoạch giảng dạy và đăng ký học phần HK3, 2020-2021",
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [data, setData] = useState([]);
+    useEffect(() => {
+        const fetchApi = async () => {
+            const res = await getAll(page);
+            setData(res.data);
+            setTotalPages(res);
+        };
+        fetchApi();
+    }, [page]);
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages.lastPage) {
+            setPage(newPage);
+        }
+    };
+    const navigate = useNavigate();
 
-    ];
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = list.slice(indexOfFirstItem, indexOfLastItem);
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const detail = async (id) => {
+        navigate("/newsDetail", {state: id});
+    }
+
     return (
         <div>
             <Header />
             <div className="border-2 border-slate-400 rounded-sm w-1/2  mt-5 ml-auto mr-auto ">
-                <div className="w-1/2 h-12 shadow-xl p-3 shadow-slate-500/50 m-auto text-center">
-                    <h1 className="text-lg text-red-500 font-semibold">THÔNG BÁO MỚI NHẤT</h1>
+                <div className="w-1/2 h-12 shadow-xl rounded-md p-3 mt-2 shadow-slate-500 m-auto text-center border-2 border-slate-300">
+                    <h1 className="text-lg text-red-500 font-semibold ">THÔNG BÁO MỚI NHẤT</h1>
                 </div>
                 <div className="mb-3 mt-3">
                     <ul>
                         {
-                            currentItems.map((e, index) => (
-                               <Link to="/newsDetail"><li key={index} className="py-1 text-center">{e}</li></Link>
-                            )
+                            data && data?.map((e) => (
+                                <li key={e.id} onClick={() => detail(e.id)} className="py-2 text-center hover:font-semibold hover:text-red-500 hover:cursor-pointer"> Thông báo mở hội đồng <span className="font-semibold text-cyan-600">{e.code}</span> bảo vệ luận văn</li>
+                             )
                             )
                         }
 
                     </ul>
                 </div>
-                <div className="mb-3">
-                    <Pagination
-                        itemsPerPage={itemsPerPage}
-                        totalItems={list.length}
-                        paginate={paginate}
+                <div className="flex justify-center align-middle my-4">
+                    <button
+                        type="button"
+                        onClick={() => handlePageChange(page - 1)}
+                        disabled={page === 1}
+                        className="p-2 border-2 border-r-0 border-indigo-600 hover:bg-indigo-600 hover:text-white">
+                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M17.77 3.77L16 2 6 12l10 10 1.77-1.77L9.54 12z"></path></svg>
+                    </button>
+                    <Paginate
+                        currentPage={page}
+                        totalPages={totalPages.lastPage}
+                        onPageChange={handlePageChange}
                     />
+                    <button
+                        type="button"
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={page === totalPages.lastPage}
+                        className="p-2 border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white">
+                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M6.23 20.23L8 22l10-10L8 2 6.23 3.77 14.46 12z"></path></svg>
+                    </button>
                 </div>
             </div>
         </div>

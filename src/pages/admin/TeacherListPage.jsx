@@ -177,12 +177,12 @@ const TeacherListPage = () => {
             const role = await roleAccount();
             setRole(role);
             setUpdateData({
-                email: detailUsers.email,
-                fullName: detailUsers.fullName,
-                numberPhone: detailUsers.numberPhone,
-                address: detailUsers.address,
-                gender: detailUsers.gender,
-                role: detailUsers.role.id
+                email: detailUsers?.email,
+                fullName: detailUsers?.fullName,
+                numberPhone: detailUsers?.numberPhone,
+                address: detailUsers?.address,
+                gender: detailUsers?.gender,
+                role: detailUsers?.role?.id
             });
         };
         fetchData();

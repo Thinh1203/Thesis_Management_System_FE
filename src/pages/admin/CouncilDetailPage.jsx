@@ -128,9 +128,9 @@ const CouncilDetailPage = () => {
 
                             </div>
                             <div className="px-4">
-                                <div className="grid grid-cols-11 border-b-2 border-black text-center font-semibold">
+                                <div className="grid grid-cols-12 border-b-2 border-black text-center font-semibold">
                                     <div>Mã đề tài</div>
-                                    <div className="col-span-2">Tên tiếng Việt</div>
+                                    <div className="col-span-3">Tên tiếng Việt</div>
                                     <div className="col-span-2">Tên tiếng Anh</div>
                                     <div className="col-span-2">Sinh viên thực hiện</div>
                                     <div className="col-span-2">Giảng viên hướng dẫn</div>
@@ -138,12 +138,12 @@ const CouncilDetailPage = () => {
                                     <div>Học kỳ</div>
                                 </div>
 
-                                <div className="grid grid-cols-11">
+                                <div className="grid grid-cols-12">
                                     {
                                         councilDetail && councilDetail.theses?.map(e => (
                                             <React.Fragment key={e.id}>
                                                 <div className="text-center">{e.topic.code}</div>
-                                                <div className="col-span-2 px-2 text-center">{e.topic.VietnameseName}</div>
+                                                <div className="col-span-3 px-2 text-center">{e.topic.VietnameseName}</div>
                                                 <div className="col-span-2 mx-2 text-center">{e.topic.EnglishName}</div>
                                                 <div className="col-span-2 text-center">{e.student.fullName}</div>
                                                 <div className="col-span-2 text-center">{e.teacher.fullName}</div>
