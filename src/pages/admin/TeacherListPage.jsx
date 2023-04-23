@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaLockOpen, FaLock } from "react-icons/fa";
 import { createAccount, getListTeacher, search, updateStatus, deleteAccount, roleAccount, getOneTeacher, updateTeacherInformation, uploadFile } from "../../api/adminApi/teacherPage";
 import { checkEmail, checkPhoneNumber } from "../../utils/validation";
+import urlEmptyBox from "../../assets/image/empty_box.png"
 import Paginate from "../../components/Paginate";
 const TeacherListPage = () => {
     const [accountListModal, setAccountListModal] = useState(false);
@@ -35,6 +36,7 @@ const TeacherListPage = () => {
     const [removeUserId, setRemoveUserId] = useState(0);
     const [idUser, setIdUser] = useState();
     const [role, setRole] = useState([]);
+    const [searchData, setSearchData] = useState(true);
     const [updateData, setUpdateData] = useState({
         email: "", fullName: "", numberPhone: "", address: "", gender: "", roleId: 0
     });
@@ -61,6 +63,12 @@ const TeacherListPage = () => {
             if (query) {
                 const response = await search(query);
                 setResults(response);
+                if (response.length > 0) {
+                    setSearchData(true);
+                } else {
+                    setSearchData(false);
+                }
+                
             } else {
                 setResults([]);
             }
@@ -315,7 +323,12 @@ const TeacherListPage = () => {
                                         </div>
                                     </div>))
                             )}
-                            {(query && results.length < 1) && (<div className=" table-auto w-ful grid grid-cols-11 border-b-2 border-b-slate-300 rounded-sm text-center"><h1 className="text-red-700 text-2xl font-semibold col-span-11 py-2">Không tìm thấy!</h1></div>)}
+                            {(query && !searchData) &&
+                                (<div className="flex flex-col items-center table-auto w-ful border-b-2 border-b-slate-300 rounded-sm text-center">
+                                    <h1 className="text-red-500 text-2xl font-semibold py-2">Không có kết quả phù hợp!</h1>
+                                    <img className="w-1/6 h-1/6" src={urlEmptyBox} alt="Empty box" />
+                                </div>)
+                            }
 
 
                             {!query && (user?.map((e) => (

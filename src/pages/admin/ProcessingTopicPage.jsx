@@ -13,6 +13,7 @@ import { getAllStudent } from "../../api/adminApi/studentPage";
 import { getAllTeacher } from "../../api/adminApi/teacherPage";
 import { getAll, getAllCouncil } from "../../api/adminApi/council";
 import { getListSemester } from "../../api/adminApi/schoolYearPage";
+import urlEmptyBox from "../../assets/image/empty_box.png"
 import Paginate from "../../components/Paginate";
 
 const ProcessingTopicPage = () => {
@@ -297,8 +298,11 @@ const ProcessingTopicPage = () => {
                                 }
 
                             </div>
-                            {(query && !searchData) && (<div className=" table-auto w-ful grid grid-cols-11 border-b-2 border-b-slate-300 rounded-sm text-center"><h1 className="text-red-700 text-2xl font-semibold col-span-11 py-2">Không tìm thấy!</h1></div>)}
-
+                            {(query && !searchData) &&
+                                (<div className="flex flex-col items-center table-auto w-ful border-b-2 border-b-slate-300 rounded-sm text-center">
+                                    <h1 className="text-red-500 text-2xl font-semibold py-2">Không có kết quả phù hợp!</h1>
+                                    <img className="w-1/6 h-1/6" src={urlEmptyBox} alt="Empty box" />
+                                </div>)}
                             {
                                 (query && searchData) && (
                                     <div className="flex justify-center align-middle mt-4">

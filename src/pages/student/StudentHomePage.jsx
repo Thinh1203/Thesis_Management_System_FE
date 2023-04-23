@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../assets/image/logo.png";
 import logoCit from "../../assets/image/logoCit.png";
 import DropDown from "../../components/DropDown";
 import { AiFillHome } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { getTheses } from "../../api/studentApi";
 const StudentHomePage = () => {
-
+    const [data, SetData] = useState(null);
     const navigate = useNavigate();
-    const handleNavigate = () => navigate("/student/topic/detail");
+    const handleNavigate = (id) => navigate("/student/topic/detail", {state: id});
     const topic = [
         {
             "id": 1,
@@ -19,12 +20,19 @@ const StudentHomePage = () => {
             "endDate": "27/04/2023",
         }
     ];
+    useEffect(() => {
+        const fetchApi = async () => {
+            const res = await getTheses();
+            SetData(res);
+        };
+        fetchApi(); 
+    }, []);
     return (
         <div className="grid grid-rows-6">
             <div className="bg-white  grid grid-cols-2">
                 <div className="grid grid-cols-3">
-                    <div>
-                        <img className="h-24 w-auto ml-auto my-2" src={logoCit} alt="" />
+                    <div >
+                        <Link to="/student/home"><img className="h-24 w-auto ml-auto my-2" src={logoCit} alt="logo cict" /></Link>
                     </div>
                     <div className="grid grid-rows-2 mx-2 col-span-2">
                         <div className="mt-4 text-lg font-bold text-blue-800">
@@ -43,26 +51,22 @@ const StudentHomePage = () => {
                     <div className="grid grid-cols-6 text-center my-5 font-semibold text-md">
                         <div>Mã đề tài</div>
                         <div>Tên đề tài</div>
-                        <div>Ngày bắt đầu</div>
-                        <div>Ngày kết thúc</div>
-                        <div>Trạng thái</div>
+                        <div>Hạn nộp file báo cáo</div>
+                        <div>Hội đồng báo cáo</div>
+                        <div>Trạng thái file báo cáo</div>
                         <div>Hành động</div>
                     </div>
                     <div className="grid grid-cols-6 text-center">
-                        {  
-                            topic.map((e, index) => (
-                                <React.Fragment key={e.id}>
-                                    <div className="my-2">{e.code}</div>
-                                    <div className="my-2">{e.name}</div>
-                                    <div className="my-2">{e.startDate}</div>
-                                    <div className="my-2">{e.endDate}</div>
-                                    {!e.score ? (<div className="my-2 text-red-700">Đang thực hiện</div>) : (<div className="my-2 text-green-700">Đã hoàn thành</div>)}
-                                    <div>
-                                        <button className="p-2 bg-green-800 text-white rounded-md" onClick={() => handleNavigate()}>Xem chi tiết</button>
-                                    </div>
-                                </React.Fragment>
-                            ))
-                        }
+                        <div className="">{data && data.topic.code}</div>
+                        <div className="">{data && data.topic.VietnameseName}</div>
+                        <div className="">{data && (new Date(data.endDate).toLocaleDateString('en-GB'))}</div>
+                        <div className="">{data && data.council.code}</div>
+                        <div className="">{
+                            data?.statusFile ? (<div className=" text-green-700">Đã nộp</div>) : (<div className=" text-red-700">Chưa nộp</div>)
+                        }</div>
+                        <div>
+                            <button className="p-2 bg-green-800 text-white rounded-md" onClick={() => handleNavigate(data.id)}>Xem chi tiết</button>
+                        </div>
                     </div>
                 </div>
             </div>

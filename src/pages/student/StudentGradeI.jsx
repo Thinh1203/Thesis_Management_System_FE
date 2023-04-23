@@ -3,6 +3,7 @@ import logo from "../../assets/image/logo.png";
 import logoCit from "../../assets/image/logoCit.png";
 import { AiFillHome } from "react-icons/ai";
 import DropDown from "../../components/DropDown";
+import { Link } from "react-router-dom";
 const StudentGradeI = () => {
     const file = [
         {
@@ -17,7 +18,7 @@ const StudentGradeI = () => {
             <div className="bg-white  grid grid-cols-2">
                 <div className="grid grid-cols-3">
                     <div>
-                        <img className="h-24 w-auto ml-auto my-2" src={logoCit} alt="" />
+                        <Link to="/student/home"><img className="h-24 w-auto ml-auto my-2" src={logoCit} alt="logo cict" /></Link>
                     </div>
                     <div className="grid grid-rows-2 mx-2 col-span-2">
                         <div className="mt-4 text-lg font-bold text-blue-800">
@@ -34,9 +35,9 @@ const StudentGradeI = () => {
                 <div className="bg-slate-200 absolute w-1/3 h-56 mt-44 rounded-md shadow-xl shadow-slate-400 ">
                     <h3 className="mt-5 ml-8 font-semibold text-black text-xl">Xin điểm i</h3>
                     {
-                        file.length ? 
-                        (file.map((e, index) => (
-                            
+                        file.length ?
+                            (file.map((e, index) => (
+
                                 <>
                                     <div className="grid grid-cols-2 text-center mt-2">
                                         <div className="font-semibold">
@@ -51,14 +52,14 @@ const StudentGradeI = () => {
                                             {e.name}
                                         </div>
                                         <div className="text-center">
-                                            {e.status === "waiting" ? (<p className="text-yellow-600">Chờ duyệt</p>) : (<div className={e.status==="yes" ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>{e.status==="yes" ? "Đã duyệt" : "Đã bị từ chối"}</div>) }
+                                            {e.status === "waiting" ? (<p className="text-yellow-600">Chờ duyệt</p>) : (<div className={e.status === "yes" ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>{e.status === "yes" ? "Đã duyệt" : "Đã bị từ chối"}</div>)}
                                         </div>
                                     </div></>
-                            ) 
-                        )) :  (( 
-                            <input className="my-10 mx-20" type="file"
-                                id="avatar" name="avatar"
-                                accept="image/png, image/jpeg" /> 
+                            )
+                            )) : ((
+                                <input className="my-10 mx-20" type="file"
+                                    id="avatar" name="avatar"
+                                    accept="image/png, image/jpeg" />
                             ))
                     }
 

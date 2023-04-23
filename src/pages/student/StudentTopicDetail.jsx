@@ -1,35 +1,61 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../assets/image/logo.png";
 import logoCit from "../../assets/image/logoCit.png";
 import DropDown from "../../components/DropDown";
 import { AiFillHome } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { getThesesDetail, uploadFile, download, fileName } from "../../api/studentApi";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { FaDownload } from "react-icons/fa";
+import FileDownload from "js-file-download";
 const StudentTopicDetail = () => {
+    const location = useLocation();
+    const id = location.state;
+    const [data, setData] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const handleFileInput = (event) => {
+        setSelectedFile(event.target.files[0]);
+    }
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getThesesDetail(id);
+            setData(res);
+        };
+        fetchData();
+    }, [data]);
 
-    const navigate = useNavigate();
-
-    const topic = [
-        {
-            "id": 1,
-            "name": "Quách Huy Thịnh",
-            "gvhd": "Lâm Nhựt Khang",
-            "topicName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "score": "",
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-            "major": "Công nghệ thông tin",
-            "courses": "2022-2023",
-            "file": null
+    const postFile = async () => {
+        const allowedTypes = ['application/pdf'];
+        if (!selectedFile) {
+            toast.error('File nộp không được để trống!');
+        } else {
+            if (!allowedTypes.includes(selectedFile.type)) {
+                toast.error('Chỉ cho phép nộp file PDF.');
+            } else {
+                const res = await uploadFile(data.id, selectedFile);
+                if (res.statusCode === 200) {
+                    const data = await getThesesDetail(id);
+                    setData(data);
+                    return toast.success('Đã nộp file báo cáo');
+                }
+            }
         }
-    ];
+    }
+
+    const downloadFile = async (e) => {
+        e.preventDefault();
+        const file = await download(id);
+        const nameFile = await fileName(id);
+        FileDownload(file.data, nameFile);
+      };
+
     return (
         <div className="grid grid-rows-6">
             <div className="bg-white  grid grid-cols-2">
                 <div className="grid grid-cols-3">
                     <div>
-                        <img className="h-24 w-auto ml-auto my-2" src={logoCit} alt="" />
+                        <Link to="/student/home"><img className="h-24 w-auto ml-auto my-2" src={logoCit} alt="logo cict" /></Link>
                     </div>
                     <div className="grid grid-rows-2 mx-2 col-span-2">
                         <div className="mt-4 text-lg font-bold text-blue-800">
@@ -47,42 +73,40 @@ const StudentTopicDetail = () => {
                     <h3 className="mt-5 ml-8 font-semibold text-red-800 text-xl">Chi tiết khóa luận</h3>
                     <div className="grid grid-cols-2 mt-5 ml-10">
                         <div className="grid grid-cols-3">
-                            {/* <h3 className="mt-5 ml-8 font-semibold text-black text-xl">Chi tiết khóa luận</h3> */}
                             <div>
                                 <div className="my-1 mx-2">Mã đề tài:</div>
                                 <div className="my-1 mx-2">Tên đề tài:</div>
                                 <div className="my-1 mx-2">Tên tiếng anh:</div>
                                 <div className="mx-2 my-1">Giảng viên hướng dẫn</div>
                                 <div className="my-1 mx-2">Sinh viên thực hiện:</div>
-                                <div className="mx-2 my-1">Thời gian bắt đầu:</div>
-                                <div className="my-1 mx-2">Thời gian kết thúc:</div>
-                                {/* <div className="mx-2">Ngành:</div> */}
+                                <div className="my-1 mx-2">Hạn nộp báo cáo:</div>
                                 <div className="my-1 mx-2">Niên khóa:</div>
+                                <div className="my-1 mx-2">Học kỳ:</div>
                             </div>
                             <div className="col-span-2">
                                 {
-                                    topic.map((e, index) => (
-                                        <React.Fragment key={e.id}>
-                                            <div className="my-1">{e.code}</div>
-                                            <div className="my-1">{e.topicName}</div>
-                                            <div className="my-1">{e.englishName}</div>
-                                            <div className="my-1">{e.gvhd}</div>
-                                            <div className="my-1">{e.name}</div>
-                                            <div>{e.startDate}</div>
-                                            <div className="my-1">{e.endDate}</div>
-                                            {/* <div>{e.major}</div> */}
-                                            <div className="my-1">{e.courses}</div>
-                                        </React.Fragment>
-                                    ))
+                                    data && (
+                                        <div>
+                                            <div className="my-1">{data.topic.code}</div>
+                                            <div className="my-1">{data.topic.VietnameseName}</div>
+                                            <div className="my-1">{data.topic.EnglishName}</div>
+                                            <div className="my-1">{data.teacher.fullName}</div>
+                                            <div className="my-1">{data.student.fullName}</div>
+                                            <div className="my-1">{new Date(data.endDate).toLocaleDateString('en-GB')}</div>
+                                            <div className="my-1">{data.shoolYear.year}</div>
+                                            <div className="my-1">{data.shoolYear.semester}</div>
+                                        </div>
+                                    )
                                 }
+
                             </div>
                         </div>
                         <div>
                             <h4 className="text-red-700 font-semibold">Tập tin luận văn</h4>
                             <div className="grid grid-cols-3">
                                 <div className="grid grid-rows-2">
-                                    <div className="my-4 mx-4">
-                                        Link tập tin: <p className="font-medium text-yellow-600">&#40;File chỉ nộp một lần&#41;</p>
+                                    <div className="my-2 mx-4">
+                                        Tập tin (PDF): <p className="font-medium text-yellow-600">&#40;File chỉ nộp một lần&#41;</p>
                                     </div>
                                     <div className="mx-4">
                                         Trạng thái:
@@ -90,16 +114,37 @@ const StudentTopicDetail = () => {
                                 </div>
                                 <div className="grid grid-rows-2 col-span-2">
                                     {
-                                        topic.map((e, index) => (
-                                            <React.Fragment key={e.id}>
-                                                <div className="my-4">{e.file ? e.file : (
-                                                    <input type="file"
-                                                        id="avatar" name="avatar"
-                                                        accept="image/png, image/jpeg" />
-                                                )}</div>
-                                                {e.file ? (<div className=" text-green-700">Đã nộp</div>) : (<div className=" text-red-600">Chưa nộp</div>)}
+                                        data && (
+                                            <React.Fragment>
+                                                {
+                                                    data.reportFile ? (
+                                                        <div className="mt-4">
+                                                            <button onClick={(e) => downloadFile(e)} className="flex">
+                                                                <div className="mr-2 mt-1 text-blue-600"><FaDownload /></div>
+                                                                <div className="text-blue-600">Tải tập tin xuống</div>
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="mt-2 flex hover:cursor-pointer">
+                                                            <div>
+                                                                <input type="file" onChange={(e) => handleFileInput(e)} />
+                                                            </div>
+                                                            <div>
+                                                                <button
+                                                                    className="rounded-sm bg-green-600 text-white hover:bg-green-700 p-1"
+                                                                    onClick={() => postFile()} >
+                                                                    Nộp file
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                }
+
+                                                <div>
+                                                    {data.statusFile ? (<div className=" text-green-700">Đã nộp</div>) : (<div className=" text-red-600">Chưa nộp</div>)}
+                                                </div>
                                             </React.Fragment>
-                                        ))
+                                        )
                                     }
                                 </div>
                             </div>
@@ -107,7 +152,7 @@ const StudentTopicDetail = () => {
                                 <h4 className="text-red-700 font-semibold">Kết quả</h4>
                                 <div className="grid grid-cols-3">
                                     <div className="grid grid-rows-2">
-                                        <div className="my-4 mx-4">
+                                        <div className="my-2 mx-4">
                                             Điểm:
                                         </div>
                                         <div className="mx-4">
@@ -115,13 +160,11 @@ const StudentTopicDetail = () => {
                                         </div>
                                     </div>
                                     <div className="grid grid-rows-2 col-span-2">
-                                        {
-                                            topic.map((e, index) => (
-                                                <React.Fragment key={e.id}>
-                                                    <div className="my-4">{e.score ? e.score : ""}</div>
-                                                    {!e.score ? (<div className="text-yellow-600">Chưa chấm điểm</div>) : (<div className={e.score >= 4 ? "text-green-700 font-semibold" : "text-red-600 font-semibold"}>{e.score >= 4 ? "Đạt" : "Chưa đạt"}</div>)}
-                                                </React.Fragment>
-                                            ))
+                                        {data &&
+                                            <React.Fragment key={data.id}>
+                                                <div className="my-2">{data.score ? data.score : ""}</div>
+                                                {!data.score ? (<div className="text-yellow-600">Chưa chấm điểm</div>) : (<div className={data.score >= 4 ? "text-green-700 font-semibold" : "text-red-600 font-semibold"}>{data.score >= 4 ? "Đạt" : "Chưa đạt"}</div>)}
+                                            </React.Fragment>
                                         }
                                     </div>
                                 </div>
@@ -153,6 +196,19 @@ const StudentTopicDetail = () => {
                     </div>
                 </div>
             </div>
+
+            <ToastContainer
+                position="top-right"
+                autoClose={1000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
         </div>
     );
 }

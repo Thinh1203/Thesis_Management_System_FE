@@ -1,36 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaLockOpen } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { getAllCouncil } from "../../api/teacherApi";
 const CouncilPage = () => {
-    const council = [
-        {
-            "id": 1,
-            "code": "CNTT01",
-            "startDate": "24/04/2023",
-            "timeStart": "7:30",
-            "timeEnd": "11:30",
-            "status": true,
-            "position": "Chủ tịch"
-        },
-        {
-            "id": 2,
-            "code": "CNTT01",
-            "startDate": "24/04/2023",
-            "timeStart": "7:30",
-            "timeEnd": "11:30",
-            "status": false
-        },
-        {
-            "id": 3,
-            "code": "CNTT01",
-            "startDate": "24/04/2023",
-            "timeStart": "7:30",
-            "timeEnd": "11:30",
-            "status": false,
-            "position": "Thư ký"
-        },
-    ];
+    const [data, setData] = useState([]);
+    const navigate = useNavigate();
+    useState(() => {
+        const fetchApi = async () => {
+            const res = await getAllCouncil();
+            setData(res);
+        };
+        fetchApi();
+    }, []);
+
+    const detailCouncil = async (id) => {
+        navigate("/teacher/detail", {state: id});
+    };
     return (
         <div>
             <div className="mt-20">
@@ -49,15 +35,15 @@ const CouncilPage = () => {
                         <div>Hành động</div>
                     </div>
                     <div className="grid grid-cols-7 text-center  text-base">
-                        {council.map((e, index) => (
+                        { data && data.map((e) => (
                             <React.Fragment key={e.id}>
-                                <div className="my-2">{e.code}</div>
-                                <div className="my-2">{e.startDate}</div>
-                                <div className="my-2">{e.timeStart}</div>
-                                <div className="my-2">{e.timeEnd}</div>
-                                {!e.position ? (<div className="my-2">Giảng viên hướng dẫn</div>) : (<div className="my-2">{e.position}</div>)}
-                                {!e.status ? (<div className="text-red-700s text-red-700 m-auto"><FaLock/></div>): (<div className="text-green-700  m-auto"><FaLockOpen /></div>)}
-                                {e.status ? (<div>{e.position && (<Link to="/teacher/detail"><button className="my-1 bg-green-700 p-1 rounded-md text-white">Xem chi tiết</button></Link>)}</div>) : (<div></div>)}
+                                <div className="my-1">{e.code}</div>
+                                <div className="my-1">{new Date(e.startDate).toLocaleDateString('en-GB')}</div>
+                                <div className="my-1">{e.timeStart.slice(0, -3)}</div>
+                                <div className="my-1">{e.timeEnd.slice(0, -3)}</div>
+                                {(e.position ==="gvhd") ? (<div className="my-1">Giảng viên hướng dẫn</div>) : (<div className="my-1">{e.position}</div>)}
+                                {!e.status ? (<div className="text-red-700s text-red-700 m-auto"><FaLock /></div>) : (<div className="text-green-700  m-auto"><FaLockOpen /></div>)}
+                                {e.status ? (<div>{(e.position!=='gvhd') && (<button onClick={() => detailCouncil(e.id)} className="  p-1 rounded-md text-blue-700 font-semibold hover:text-blue-500">Xem chi tiết</button>)}</div>) : (<div></div>)}
                             </React.Fragment>
                         ))}
                     </div>

@@ -10,6 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaLockOpen, FaLock } from "react-icons/fa";
 import { checkEmail, checkPhoneNumber } from "../../utils/validation";
+import urlEmptyBox from "../../assets/image/empty_box.png"
 import Paginate from "../../components/Paginate";
 const StudentListPage = () => {
     const [accountListModal, setAccountListModal] = useState(false);
@@ -43,7 +44,7 @@ const StudentListPage = () => {
             setUser(res.data);
             setTotalPages(res);
         }
-       
+
         getAll();
     }, [page]);
 
@@ -51,15 +52,15 @@ const StudentListPage = () => {
         const fetchData = async () => {
             if (query) {
                 const response = await search(query, pageQuery);
-                if (response.statusCode === 200) {
-                    setResults(response.data);
-                    setTotalPagesQuery(response);
-                    setSearchData(true);
+                    if (response.statusCode === 200) {
+                        setResults(response.data);
+                        setTotalPagesQuery(response);
+                        setSearchData(true);
 
-                } else {
+                    } else {
 
-                    setSearchData(false);
-                }
+                        setSearchData(false);
+                    }
 
             } else {
                 setResults([]);
@@ -184,7 +185,7 @@ const StudentListPage = () => {
         }
         fetchApi();
     }
-   
+
     const deleteUser = async (accountId) => {
         const res = await deleteAccount(accountId);
         if (res.statusCode === 200) {
@@ -211,12 +212,12 @@ const StudentListPage = () => {
                 setUser(newUserList.data);
                 setTotalPages(newUserList);
                 toast.success("Đã xóa tài khoản!");
-                return setRemoveAccountModal(false); 
+                return setRemoveAccountModal(false);
             }
             setUser(newUserList.data);
             setTotalPages(newUserList);
             toast.success("Đã xóa tài khoản!");
-            setRemoveAccountModal(false); 
+            setRemoveAccountModal(false);
         } else {
             toast.error("Có lỗi xảy ra!");
         }
@@ -331,7 +332,12 @@ const StudentListPage = () => {
                                     </div>
                                 )
                             }
-                            {(query && !searchData) && (<div className=" table-auto w-ful grid grid-cols-11 border-b-2 border-b-slate-300 rounded-sm text-center"><h1 className="text-red-700 text-2xl font-semibold col-span-11 py-2">Không tìm thấy!</h1></div>)}
+                            {(query && !searchData) &&
+                                (<div className="flex flex-col items-center table-auto w-ful border-b-2 border-b-slate-300 rounded-sm text-center">
+                                    <h1 className="text-red-500 text-2xl font-semibold py-2">Không có kết quả phù hợp!</h1>
+                                    <img className="w-1/6 h-1/6" src={urlEmptyBox} alt="Empty box" />
+                                </div>)
+                            }
                             {
                                 (!query) && (user?.map((e) => (
                                     <div key={e.id} className="table-auto w-ful grid grid-cols-9 border-b-2 border-b-slate-300 rounded-sm text-center">
@@ -495,12 +501,12 @@ const StudentListPage = () => {
                 <p>Khi xóa tài khoản người dùng sẽ <b>Không</b> thể đăng nhập hệ thống!</p>
                 <div className="grid grid-cols-2 mt-2">
                     <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => setRemoveAccountModal(false)}>Đóng</button>
-                    <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { deleteUser(removeUserId);}}>Lưu lại</button>
+                    <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={() => { deleteUser(removeUserId); }}>Lưu lại</button>
                 </div>
             </Modal>
             <Modal isVisible={editProfileModal}>
 
-                <h1 className="font-bold text-2xl px-2 pb-2">Thêm sinh viên</h1>
+                <h1 className="font-bold text-2xl px-2 pb-2">Sửa thông tin sinh viên</h1>
                 <div className="grid grid-cols-3 p-4">
                     <div className="px-2 grid grid-rows-5">
                         <div className="font-semibold mt-1">Email<span className="text-red-700 font-semibold">(*)</span></div>

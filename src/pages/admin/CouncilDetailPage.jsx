@@ -83,7 +83,6 @@ const CouncilDetailPage = () => {
         const fetchApi = async () => {
             const res = await getOneCouncil(id);
             setCouncilDetail(res.data);
-            console.log(res.data.theses);
         };
         fetchApi();
     }, []);

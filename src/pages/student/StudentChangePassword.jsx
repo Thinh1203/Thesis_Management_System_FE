@@ -1,5 +1,5 @@
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,7 +11,7 @@ import { AiFillHome, AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { changePassword } from '../../api/studentApi';
 const StudentChangePassword = () => {
     const navigate = useNavigate();
-    const handleSubmit =  async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const password = {
             oldPassword: oldPassword,
@@ -53,7 +53,7 @@ const StudentChangePassword = () => {
             <div className="bg-white  grid grid-cols-2">
                 <div className="grid grid-cols-3">
                     <div>
-                        <img className="h-24 w-auto ml-auto my-2" src={logoCit} alt="" />
+                        <Link to="/student/home"><img className="h-24 w-auto ml-auto my-2" src={logoCit} alt="logo cict" /></Link>
                     </div>
                     <div className="grid grid-rows-2 mx-2 col-span-2">
                         <div className="mt-4 text-lg font-bold text-blue-800">

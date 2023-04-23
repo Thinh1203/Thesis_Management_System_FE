@@ -47,3 +47,30 @@ export const ListOfGuidedTopics = async (token) => {
         throw (err);
     }
 }
+
+export const getAllCouncil = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get("/teacher/getAllCouncil", { headers });
+        return res.data;
+    } catch (err) {
+        throw (err);
+    }
+}
+
+
+export const postScore = async (data, id) => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.post(`/theses/transcript/${id}`, data, { headers });
+        return res.data;
+    } catch (err) {
+        throw (err);
+    }
+}

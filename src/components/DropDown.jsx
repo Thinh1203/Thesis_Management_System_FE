@@ -38,10 +38,6 @@ const DropDown = () => {
             <Link to="/myProfile">Thông tin cá nhân</Link>
           </li>
           )}
-          {(role === "SV") && (<li className="hover:bg-blue-800 hover:text-white text-sm text-gray-700 block px-4 py-2 font-medium">
-            <Link to="/student/home">Trang chủ</Link>
-          </li>
-          )}
           <li className="text-sm hover:bg-blue-800 hover:text-white text-gray-700 block px-4 py-2 font-medium">
             {(role === "SV") ?
               (<Link to="/Student/ChangePassword">Đổi mật khẩu</Link>)
