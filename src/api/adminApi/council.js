@@ -145,3 +145,16 @@ export const getOneCouncilDetail = async (id) => {
         return (error);
     }
 }
+
+export const getScoreDetail = async (id) => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get(`/council/scoreDetail/${id}`, { headers });
+        return res.data;
+    } catch (error) {
+        return (error);
+    }
+}

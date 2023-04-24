@@ -73,29 +73,29 @@ const StudentTopicDetail = () => {
                     <h3 className="mt-5 ml-8 font-semibold text-red-800 text-xl">Chi tiết khóa luận</h3>
                     <div className="grid grid-cols-2 mt-5 ml-10">
                         <div className="grid grid-cols-3">
-                            <div>
-                                <div className="my-1 mx-2">Mã đề tài:</div>
-                                <div className="my-1 mx-2">Tên đề tài:</div>
-                                <div className="my-1 mx-2">Tên tiếng anh:</div>
-                                <div className="mx-2 my-1">Giảng viên hướng dẫn</div>
-                                <div className="my-1 mx-2">Sinh viên thực hiện:</div>
-                                <div className="my-1 mx-2">Hạn nộp báo cáo:</div>
-                                <div className="my-1 mx-2">Niên khóa:</div>
-                                <div className="my-1 mx-2">Học kỳ:</div>
-                            </div>
-                            <div className="col-span-2">
+                            {/* <div className="grid grid-rows-8">
+                                <div className=" mx-2">Mã đề tài:</div>
+                                <div className=" mx-2">Tên đề tài:</div>
+                                <div className=" mx-2">Tên tiếng anh:</div>
+                                <div className="mx-2 ">Giảng viên hướng dẫn</div>
+                                <div className=" mx-2">Sinh viên thực hiện:</div>
+                                <div className=" mx-2">Hạn nộp báo cáo:</div>
+                                <div className="mx-2">Niên khóa:</div>
+                                <div className=" mx-2">Học kỳ:</div>
+                            </div> */}
+                            <div className="col-span-3 grid grid-rows-8 mx-auto">
                                 {
                                     data && (
-                                        <div>
-                                            <div className="my-1">{data.topic.code}</div>
-                                            <div className="my-1">{data.topic.VietnameseName}</div>
-                                            <div className="my-1">{data.topic.EnglishName}</div>
-                                            <div className="my-1">{data.teacher.fullName}</div>
-                                            <div className="my-1">{data.student.fullName}</div>
-                                            <div className="my-1">{new Date(data.endDate).toLocaleDateString('en-GB')}</div>
-                                            <div className="my-1">{data.shoolYear.year}</div>
-                                            <div className="my-1">{data.shoolYear.semester}</div>
-                                        </div>
+                                        <React.Fragment>
+                                            <div> Mã đề tài: {data.topic.code}</div>
+                                            <div > Tên đề tài: {data.topic.VietnameseName}</div>
+                                            <div > Tên tiếng anh: {data.topic.EnglishName}</div>
+                                            <div > Giảng viên hướng dẫn: {data.teacher.fullName}</div>
+                                            <div > Sinh viên thực hiện: {data.student.fullName}</div>
+                                            <div > Hạn nộp báo cáo: {new Date(data.endDate).toLocaleDateString('en-GB')}</div>
+                                            <div > Niên khóa: {data.shoolYear.year}</div>
+                                            <div > Học kỳ: {data.shoolYear.semester}</div>
+                                            </React.Fragment>
                                     )
                                 }
 

@@ -3,11 +3,13 @@ import DropDown from "../../components/DropDown";
 import TeacherLeftDashboard from "../../components/TeacherLeftDashboard";
 import { FaUserAlt, FaUserGraduate , FaUsers } from "react-icons/fa";
 import { GiBookmark } from "react-icons/gi";
-import { getTotalTeacher, getTotalStudent } from "../../api/adminApi/dashboard";
+import { getTotalTeacher, getTotalStudent, getTotalCouncil, getTotalTheses } from "../../api/adminApi/dashboard";
 const AdminHomePage = () => {
 
     const [totalTeacher, setTotalTeacher] = useState(0);
-    const [totalStudent, setTotalStudent] = useState(0)
+    const [totalStudent, setTotalStudent] = useState(0);
+    const [totalCouncil, setTotalCouncil] = useState(0);
+    const [totalTheses, setTotalTheses] = useState(0);
 
     useEffect(() => {
         const fetchApi = async () => {
@@ -26,6 +28,21 @@ const AdminHomePage = () => {
         fetchApi();
     }, []);
 
+    useEffect(() => {
+        const fetchApi = async () => {
+            const res = await getTotalCouncil();
+            setTotalCouncil(res.total);
+        };
+        fetchApi();
+    }, []);
+
+    useEffect(() => {
+        const fetchApi = async () => {
+            const res = await getTotalTheses();
+            setTotalTheses(res.total);
+        };
+        fetchApi();
+    }, []);
     return (
         <div>
             <div className="flex">
@@ -66,7 +83,7 @@ const AdminHomePage = () => {
                             <div className="grid grid-cols-3 shadow-2xl w-5/6 h-32 shadow-slate-600 rounded-md">
                                 <div className="col-span-2 p-2 my-3 mx-2">
                                     <h4 className="font-medium text-lg text-slate-700">HỘI ĐỒNG</h4>
-                                    <p className="mt-2 font-semibold text-4xl">12</p>
+                                    <p className="mt-2 font-semibold text-4xl">{totalCouncil ? totalCouncil : "0"}</p>
                                 </div>
                                 <div className="rounded-full bg-green-700 w-5/6 h-16 text-white px-4 mt-7"> 
                                     <div className="text-3xl mt-4 mx-1">
@@ -77,7 +94,7 @@ const AdminHomePage = () => {
                             <div className="grid grid-cols-3 shadow-2xl w-5/6 h-32 shadow-slate-600 rounded-md">
                                 <div className="col-span-2 p-2 my-3 mx-2">
                                     <h4 className="font-medium text-lg text-slate-700">KHOÁ LUẬN</h4>
-                                    <p className="mt-2 font-semibold text-4xl">12</p>
+                                    <p className="mt-2 font-semibold text-4xl">{totalTheses}</p>
                                 </div>
                                 <div className="rounded-full bg-yellow-500 w-5/6 h-16 text-white px-4 mt-7"> 
                                     <div className="text-3xl mt-4 mx-1">

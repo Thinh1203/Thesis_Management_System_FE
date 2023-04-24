@@ -3,10 +3,29 @@ import 'react-toastify/dist/ReactToastify.css';
 import { SlSocialDropbox } from "react-icons/sl";
 import DropDown from "../../components/DropDown";
 import TeacherLeftDashboard from "../../components/TeacherLeftDashboard";
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaDownload } from "react-icons/fa";
+import { getList, download, fileName } from "../../api/adminApi/gradeI";
+import urlEmptyBox from "../../assets/image/empty_box.png";
+import FileDownload from "js-file-download";
 const GradeIListPage = () => {
-    const [status, setStatus] = useState(true);
+
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        const fetchApi = async () => {
+            const res = await getList();
+            setData(res);
+            console.log(data);
+            // console.log(res);
+        };
+        fetchApi();
+    }, []);
+    const downloadFile = async (id) => {
+        const file = await download(id);
+        const nameFile = await fileName(id);
+        FileDownload(file.data, nameFile);
+      };
     const notify = (text) => {
         toast.success(text, {
             position: "top-center",
@@ -41,68 +60,62 @@ const GradeIListPage = () => {
                             </div>
                             <div className="mt-4">
                                 {
-                                    status ? (
-                                        <table className="w-5/6 m-auto">
-                                            <thead >
-                                                <tr >
-                                                    <th className="border-2 border-slate-300 font-semibold">
-                                                        Mã sinh viên
-                                                    </th>
-                                                    <th className="border-y-2 border-r-2 border-slate-300 font-semibold">
-                                                        Tên sinh viên
-                                                    </th>
-                                                    <th className="border-y-2 border-r-2 border-slate-300 font-semibold">
-                                                        File
-                                                    </th>
-                                                    <th className="border-y-2 border-r-2 border-slate-300 font-semibold">
-                                                        Ngày xin
-                                                    </th>
-                                                    <th className="border-2 border-slate-300 font-semibold">
-                                                        Hành động
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="text-center">
-                                                <tr>
-                                                    <td className="border-2 border-slate-300  p-2">
-                                                        2021-2022
-                                                    </td>
-                                                    <td className="border-2 border-slate-300  p-2">
-                                                        1
-                                                    </td>
-                                                    <td className="border-2 border-slate-300  p-2">
-                                                        <button className="flex text-blue-800 m-auto"> <FaDownload /> Tải xuống </button>
-                                                    </td>
-                                                    <td className="border-2 border-slate-300  p-2">
-                                                        28/04/2023
-                                                    </td>
-                                                    <td className="border-2 border-slate-300 p-2">
-                                                        <button onClick={() => notify('Đã duyệt!')} className="bg-blue-700 hover:bg-blue-500 p-1 mr-1 text-white rounded-md">Đồng ý</button>
-                                                        <button onClick={() => notify('Đã từ chối!')} className="bg-red-700 hover:bg-red-500 p-1 text-white rounded-md">Từ chối</button>
-
-                                                        <ToastContainer
-                                                            position="top-center"
-                                                            autoClose={1000}
-                                                            hideProgressBar={false}
-                                                            newestOnTop={false}
-                                                            closeOnClick
-                                                            rtl={false}
-                                                            pauseOnFocusLoss
-                                                            draggable
-                                                            pauseOnHover
-                                                            theme="light"
-                                                        />
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-
-                                    ) : (
-                                        <div>
-                                            <div className="flex justify-center text-5xl text-yellow-600">
-                                                <SlSocialDropbox />
-                                            </div>
-                                            <h4 className="text-center font-semibold text-md text-red-700">Danh sách rỗng</h4>
+                                    data.length > 0 && (<table className="w-5/6 m-auto">
+                                        <thead >
+                                            <tr >
+                                                <th className="border-2 border-slate-300 font-semibold">
+                                                    Mã sinh viên
+                                                </th>
+                                                <th className="border-y-2 border-r-2 border-slate-300 font-semibold">
+                                                    Tên sinh viên
+                                                </th>
+                                                <th className="border-y-2 border-r-2 border-slate-300 font-semibold">
+                                                    File
+                                                </th>
+                                                <th className="border-y-2 border-r-2 border-slate-300 font-semibold">
+                                                    Ngày xin
+                                                </th>
+                                                <th className="border-2 border-slate-300 font-semibold">
+                                                    Hành động
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-center">
+                                            {
+                                                data.map(e => (
+                                                    <React.Fragment key={e.id}>
+                                                        <tr>
+                                                            <td className="border-2 border-slate-300  p-2">
+                                                                {e.account}
+                                                            </td>
+                                                            <td className="border-2 border-slate-300  p-2">
+                                                                {e.fullName}
+                                                            </td>
+                                                            <td className="border-2 border-slate-300  p-2">
+                                                                <button onClick={() => downloadFile(e.gradei.id)} className="flex text-blue-800 m-auto"> <FaDownload /> Tải xuống </button>
+                                                            </td>
+                                                            <td className="border-2 border-slate-300  p-2">
+                                                                {
+                                                                    new Date(e.gradei.createdAt).toLocaleDateString('en-GB')
+                                                                }
+                                                            </td>
+                                                            <td className="border-2 border-slate-300 p-2">
+                                                                <button onClick={() => notify('Đã duyệt!')} className="bg-blue-700 hover:bg-blue-500 p-1 mr-1 text-white rounded-md">Đồng ý</button>
+                                                                <button onClick={() => notify('Đã từ chối!')} className="bg-red-700 hover:bg-red-500 p-1 text-white rounded-md">Từ chối</button>
+                                                            </td>
+                                                        </tr>
+                                                    </React.Fragment>
+                                                ))
+                                            }
+                                        </tbody>
+                                    </table>
+                                    )
+                                }
+                                {
+                                    data.length < 1 && (
+                                        <div className="flex flex-col items-center table-auto w-ful border-b-2 border-b-slate-300 rounded-sm text-center">
+                                            <h1 className="text-red-500 text-2xl font-semibold py-2">Danh sách rỗng!</h1>
+                                            <img className="w-1/6 h-1/6" src={urlEmptyBox} alt="Empty box" />
                                         </div>
                                     )
                                 }
@@ -111,6 +124,18 @@ const GradeIListPage = () => {
                     </div>
                 </div>
             </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={1000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
         </div>
     );
 }

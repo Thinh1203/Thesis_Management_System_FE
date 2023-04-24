@@ -74,3 +74,16 @@ export const postScore = async (data, id) => {
         throw (err);
     }
 }
+
+export const getAllTopicComplete = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get("/theses/getAllTopicComplete", { headers });
+        return res.data;
+    } catch (err) {
+        throw (err);
+    }
+}
