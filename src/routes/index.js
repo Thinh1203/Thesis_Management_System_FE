@@ -25,6 +25,7 @@ import ProcessingTopicPage from "../pages/admin/ProcessingTopicPage";
 import TopicListPage from "../pages/admin/TopicListPage";
 import SchoolYearPage from "../pages/admin/SchoolYearPage";
 import CouncilDetailPage from "../pages/admin/CouncilDetailPage";
+import StudentGradeList from "../pages/admin/StudentGradeList";
 
 
 const routers = [
@@ -45,7 +46,7 @@ const routers = [
     { path:"/admin/list/council", component: CouncilListPage},
     { path:"/admin/list/teacher", component: TeacherListPage},
     { path:"/admin/list/student", component: StudentListPage},
-
+    { path:"/admin/list/gradeI/student", component: StudentGradeList},
     { path:"/admin/list/gradeI", component: GradeIListPage},
     { path:"/admin/list/topic", component: TopicListPage},
     { path:"/admin/list/topic/complete", component: CompleteTopicPage},

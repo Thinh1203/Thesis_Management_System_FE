@@ -5,19 +5,17 @@ import DropDown from "../../components/DropDown";
 import TeacherLeftDashboard from "../../components/TeacherLeftDashboard";
 import React, { useEffect, useState } from 'react';
 import { FaDownload } from "react-icons/fa";
-import { getList, download, fileName } from "../../api/adminApi/gradeI";
+import { getList, download, fileName, browse  } from "../../api/adminApi/gradeI";
 import urlEmptyBox from "../../assets/image/empty_box.png";
 import FileDownload from "js-file-download";
 const GradeIListPage = () => {
-
     const [data, setData] = useState([]);
+    
 
     useEffect(() => {
         const fetchApi = async () => {
             const res = await getList();
             setData(res);
-            console.log(data);
-            // console.log(res);
         };
         fetchApi();
     }, []);
@@ -25,19 +23,15 @@ const GradeIListPage = () => {
         const file = await download(id);
         const nameFile = await fileName(id);
         FileDownload(file.data, nameFile);
-      };
-    const notify = (text) => {
-        toast.success(text, {
-            position: "top-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-    }
+    };
+    const updateStatus = async (data, id) => {
+        const res  = await browse(data,id);
+        if(res.statusCode === 200) {
+            const res = await getList();
+            setData(res);
+            toast.success('Đã duyệt!');
+        } 
+    };
 
     return (
         <div>
@@ -100,8 +94,8 @@ const GradeIListPage = () => {
                                                                 }
                                                             </td>
                                                             <td className="border-2 border-slate-300 p-2">
-                                                                <button onClick={() => notify('Đã duyệt!')} className="bg-blue-700 hover:bg-blue-500 p-1 mr-1 text-white rounded-md">Đồng ý</button>
-                                                                <button onClick={() => notify('Đã từ chối!')} className="bg-red-700 hover:bg-red-500 p-1 text-white rounded-md">Từ chối</button>
+                                                                <button onClick={() => {  updateStatus("yes", e.gradei.id) }} className="bg-blue-700 hover:bg-blue-500 p-1 mr-1 text-white rounded-md">Đồng ý</button>
+                                                                <button onClick={() => {  updateStatus("no", e.gradei.id) }} className="bg-red-700 hover:bg-red-500 p-1 text-white rounded-md">Từ chối</button>
                                                             </td>
                                                         </tr>
                                                     </React.Fragment>

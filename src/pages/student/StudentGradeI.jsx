@@ -1,18 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../assets/image/logo.png";
 import logoCit from "../../assets/image/logoCit.png";
 import { AiFillHome } from "react-icons/ai";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import DropDown from "../../components/DropDown";
 import { Link } from "react-router-dom";
+import { uploadFile, getOne } from "../../api/adminApi/gradeI";
+import { FaDownload } from "react-icons/fa";
+import FileDownload from "js-file-download";
+import { download, fileName } from "../../api/adminApi/gradeI";
 const StudentGradeI = () => {
-    const file = [
-        {
-            "id": 1,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "status": "yes"
-        },
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [data, setData] = useState(null);
+    const handleFileInput = (event) => {
+        setSelectedFile(event.target.files[0]);
+    };
+    const postFile = async () => {
+        const allowedTypes = ['application/pdf'];
+        if (!selectedFile) {
+            return toast.error('File nộp không được để trống!');
+        } else {
+            if (!allowedTypes.includes(selectedFile.type)) {
+                toast.error('Chỉ cho phép nộp file PDF.');
+            } else {
+                const res = await uploadFile(selectedFile);
 
-    ];
+                if (res.statusCode === 200) {
+                    const res = await getOne();
+                    setData(res);
+                    return toast.success('Đã gửi đơn xin điểm i');
+                }
+            }
+        }
+    };
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getOne();
+            setData(res);
+        };
+        fetchData();
+    }, []);
+
+    const downloadFile = async (e) => {
+        e.preventDefault();
+
+        const file = await download(data.gradei.id);
+        const nameFile = await fileName(data.gradei.id);
+        FileDownload(file.data, nameFile);
+    };
+
     return (
         <div className="grid grid-rows-6">
             <div className="bg-white  grid grid-cols-2">
@@ -37,21 +74,52 @@ const StudentGradeI = () => {
                     <div className="mt-2">
                         <div className="grid grid-cols-3">
                             <div className="grid grid-rows-2">
-                                <div className="p-2 text-center text-base font-semibold">Đơn xin (.pdf)</div>
+                                <div className="p-2 text-center text-base font-semibold">Đơn gửi (.pdf)</div>
                                 <div className="p-2 text-center text-base font-semibold">Trạng thái tập tin</div>
                             </div>
                             <div className="col-span-2">
                                 <div className="grid grid-rows-2">
-                                    <div className="p-2">
-                                        <input type="file" />
-                                    </div>
-                                    <div className="p-2 text-yellow-600"></div>
+                                    {
+                                        (data && data.gradei) ? (
+                                            <React.Fragment>
+                                                <div className="mt-2">
+                                                    <button
+                                                        onClick={(e) => downloadFile(e)}
+                                                        className="flex text-blue-700 hover:text-blue-500">
+                                                        <FaDownload />
+                                                        Tải tập tin xuống
+                                                    </button>
+                                                </div>
+                                                <div className="mt-3">
+                                                    { data && data.gradei.status === "waiting" ? (
+                                                        <div className="text-yellow-600 font-semibold">Chờ duyệt</div>
+                                                    ) : data.gradei.status === "yes" ? (
+                                                        <div className="text-green-600 font-semibold">Đã duyệt</div>
+                                                    ) : (
+                                                        <div className="text-red-600">Không được duyệt</div>
+                                                    )}
+                                                </div>
+
+                                            </React.Fragment>
+                                        ) : (
+                                            <React.Fragment>
+                                                <div className="p-2">
+                                                    <input type="file" onChange={(e) => handleFileInput(e)} />
+                                                </div>
+                                                <div className="pl-2">
+                                                    <button onClick={() => postFile()} className="p-2 text-white rounded-sm bg-green-600">
+                                                        Gửi đơn
+                                                    </button>
+                                                </div>
+                                            </React.Fragment>
+                                        )
+                                    }
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
             <div className="bg-white row-span-2">
 
             </div>
@@ -75,7 +143,19 @@ const StudentGradeI = () => {
                     </div>
                 </div>
             </div>
-        </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={1000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
+        </div >
     );
 }
 

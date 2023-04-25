@@ -23,6 +23,35 @@ export const download = async (id) => {
     }
 };
 
+export const uploadFile = async (file) => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+        };
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await instance.post("/grade/uploadFile", formData, { headers });
+        return res.data;
+    } catch (error) {
+        return (error.response.status);
+    }
+}
+
+export const getOne = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+        };
+        const res = await instance.get("/grade/getOne", { headers });
+        return res.data;
+    } catch (error) {
+        return error.response.status;
+    }
+};
 
 export const fileName = async (id) => {
     try {
@@ -30,5 +59,20 @@ export const fileName = async (id) => {
         return res.data;
     } catch (error) {
         return error.response.status;
+    }
+};
+
+
+export const browse = async (data, id) => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const status = { status: data }; 
+        const res = await instance.patch(`/grade/updateOne/${id}`, status, { headers });
+        return res.data;
+    } catch (error) {
+        return error;
     }
 };

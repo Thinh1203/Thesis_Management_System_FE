@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 import logo from "../assets/image/logo.png";
-import { MdAccountCircle, MdTopic, MdOutlineArrowDropDownCircle } from "react-icons/md";
+import { MdTopic, MdCalendarMonth} from "react-icons/md";
 import { ImBook } from "react-icons/im";
 import { HiOutlineDocumentCheck, HiDocumentText, HiOutlineClipboardDocumentList } from "react-icons/hi2";
 import { AiFillDashboard, AiOutlineSchedule } from "react-icons/ai";
 import { FaUserAlt, FaUserGraduate, FaUsers } from "react-icons/fa";
-import { RiFileUserFill } from "react-icons/ri";
 import { React, useState } from "react";
 import { IoIosArrowDropdown } from "react-icons/io";
-import { BsFileEarmarkCheck, BsFileEarmark, BsListTask } from "react-icons/bs";
+import { BsFileEarmarkCheck, BsListTask } from "react-icons/bs";
+import { BsPersonFillCheck } from "react-icons/bs";
 import 'react-dropdown/style.css';
 import jwt_decode from 'jwt-decode';
 const TeacherLeftDashboard = () => {
@@ -59,16 +59,16 @@ const TeacherLeftDashboard = () => {
                                         <div className="mt-2 mx-2 font-semibold text-xl">Danh sách sinh viên</div>
                                     </Link>
                                 </li>
-                               {
-                                (role === "TK") && (
-                                    <li className=" text-white font-semibold text-xl hover:bg-blue-900">
-                                    <Link to="/admin/list/gradeI" className="flex mx-5 py-2">
-                                        <div className="mt-2 mx-2 font-semibold text-3xl"><HiDocumentText /></div>
-                                        <div className="mt-2 mx-2 font-semibold text-xl">Danh sách sinh viên xin điểm i</div>
-                                    </Link>
-                                </li>
-                                ) 
-                               }
+                                {
+                                    (role === "TK") && (
+                                        <li className=" text-white font-semibold text-xl hover:bg-blue-900">
+                                            <Link to="/admin/list/gradeI" className="flex mx-5 py-2">
+                                                <div className="mt-2 mx-2 font-semibold text-3xl"><HiDocumentText /></div>
+                                                <div className="mt-2 mx-2 font-semibold text-xl">Danh sách sinh viên xin điểm i</div>
+                                            </Link>
+                                        </li>
+                                    )
+                                }
                                 <li className=" text-white font-semibold text-xl  hover:cursor-pointer">
                                     <div className="flex px-5 py-2 hover:bg-blue-900" >
                                         <div className="mt-2 mx-2 font-semibold text-3xl"><MdTopic /></div>
@@ -103,10 +103,18 @@ const TeacherLeftDashboard = () => {
                                 </li>
                                 <li className=" text-white font-semibold text-xl hover:bg-blue-900">
                                     <Link to="/admin/year" className="flex mx-5 py-2">
-                                        <div className="mt-2 mx-2 font-semibold text-3xl"><AiOutlineSchedule /></div>
+                                        <div className="mt-2 mx-2 font-semibold text-3xl"><MdCalendarMonth /></div>
                                         <div className="mt-2 mx-2 font-semibold text-xl">Niên khóa</div>
                                     </Link>
-                                </li></>
+                                </li>
+                                <li className=" text-white font-semibold text-xl hover:bg-blue-900">
+                                    <Link to="/admin/list/gradeI/student" className="flex mx-5 py-2">
+                                        <div className="mt-2 mx-2 font-semibold text-3xl"><BsPersonFillCheck /></div>
+                                        <div className="mt-2 mx-2 font-semibold text-xl">Danh sách sinh viên xin điểm i đã duyệt</div>
+                                    </Link>
+                                </li>
+                            </>
+
                         )
                     }
                     {

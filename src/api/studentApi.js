@@ -82,3 +82,16 @@ export const fileName = async (id) => {
         return error.response.status;
     }
 };
+
+export const getListStudentGrade = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get("/student/getListStudentGrade" ,{ headers });
+        return res.data;
+    } catch (error) {
+        return (error);
+    }
+}

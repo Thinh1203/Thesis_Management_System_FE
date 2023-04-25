@@ -9,17 +9,7 @@ const StudentHomePage = () => {
     const [data, SetData] = useState(null);
     const navigate = useNavigate();
     const handleNavigate = (id) => navigate("/student/topic/detail", {state: id});
-    const topic = [
-        {
-            "id": 1,
-            "name": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "englishName": "Hệ thống quản lý thi trắc nghiệm tiếng anh",
-            "code": "CNTT2023-DT01",
-            "score": null,
-            "startDate": "01/02/2023",
-            "endDate": "27/04/2023",
-        }
-    ];
+   
     useEffect(() => {
         const fetchApi = async () => {
             const res = await getTheses();
