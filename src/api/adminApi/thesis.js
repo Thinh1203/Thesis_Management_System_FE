@@ -98,8 +98,20 @@ export const searchThesesComplete = async (value,page) => {
         const headers = {
             'Authorization': `Bearer ${token}`
         };
-        console.log(value);
         const res = await instance.get(`/theses/searchThesesComplete?q=${value}&page=${page}`, { headers });
+        return res.data;
+    } catch (error) {
+        return (error);
+    }
+}
+
+export const exportFileDetailScore = async (id) => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get(`/theses/exportFileDetailScore/${id}`, { headers });
         return res.data;
     } catch (error) {
         return (error);

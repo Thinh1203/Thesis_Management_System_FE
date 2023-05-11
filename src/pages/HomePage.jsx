@@ -37,7 +37,7 @@ const HomePage = () => {
                     <ul>
                         {
                             data && data?.map((e) => (
-                                <li key={e.id} onClick={() => detail(e.id)} className="py-2 text-center hover:font-semibold hover:text-red-500 hover:cursor-pointer"> Thông báo mở hội đồng <span className="font-semibold text-cyan-600">{e.code}</span> bảo vệ luận văn niên khóa {e.shoolYear.year} học kỳ {e.shoolYear.semester}</li>
+                                <li key={e.id} onClick={() => detail(e.id)} className="py-2 text-center hover:font-semibold hover:text-red-500 hover:cursor-pointer"> Thông báo mở hội đồng <span className="font-semibold text-cyan-600">HD{e.id}</span> bảo vệ luận văn niên khóa {e.shoolYear.year} học kỳ {e.shoolYear.semester}</li>
                              )
                             )
                         }

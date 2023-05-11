@@ -173,6 +173,12 @@ const StudentListPage = () => {
     const postFile = async (e) => {
         e.preventDefault();
         const fetchApi = async () => {
+         
+            // const allowedTypes = ['application/csv'];
+            // if (!allowedTypes.includes(selectedFile.type)) {
+            //     toast.error('vui lòng chọn file .csv!');
+            //     return;
+            // } 
             const res = await uploadFile(selectedFile);
             if (res.data.statusCode !== 200) {
                 setAccountListModal(false);

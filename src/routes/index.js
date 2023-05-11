@@ -26,6 +26,7 @@ import TopicListPage from "../pages/admin/TopicListPage";
 import SchoolYearPage from "../pages/admin/SchoolYearPage";
 import CouncilDetailPage from "../pages/admin/CouncilDetailPage";
 import StudentGradeList from "../pages/admin/StudentGradeList";
+import ExportFileDetailScore from "../pages/admin/ExportFileDetailScore";
 
 
 const routers = [
@@ -50,6 +51,7 @@ const routers = [
     { path:"/admin/list/gradeI", component: GradeIListPage},
     { path:"/admin/list/topic", component: TopicListPage},
     { path:"/admin/list/topic/complete", component: CompleteTopicPage},
+    { path:"/admin/detailScore", component: ExportFileDetailScore},
     { path:"/admin/list/topic/processing", component: ProcessingTopicPage},
     { path:"/admin/year", component: SchoolYearPage},
     { path:"/admin/council/detail", component: CouncilDetailPage},

@@ -17,12 +17,13 @@ const StudentGradeI = () => {
         setSelectedFile(event.target.files[0]);
     };
     const postFile = async () => {
-        const allowedTypes = ['application/pdf'];
+        // const allowedTypes = ['application/doc'];
+        const allowedTypes = ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
         if (!selectedFile) {
             return toast.error('File nộp không được để trống!');
         } else {
             if (!allowedTypes.includes(selectedFile.type)) {
-                toast.error('Chỉ cho phép nộp file PDF.');
+                toast.error('Chỉ cho phép nộp file doc.');
             } else {
                 const res = await uploadFile(selectedFile);
 
@@ -74,7 +75,7 @@ const StudentGradeI = () => {
                     <div className="mt-2">
                         <div className="grid grid-cols-3">
                             <div className="grid grid-rows-2">
-                                <div className="p-2 text-center text-base font-semibold">Đơn gửi (.pdf)</div>
+                                <div className="p-2 text-center text-base font-semibold">Đơn gửi (.doc)</div>
                                 <div className="p-2 text-center text-base font-semibold">Trạng thái tập tin</div>
                             </div>
                             <div className="col-span-2">
@@ -91,7 +92,7 @@ const StudentGradeI = () => {
                                                     </button>
                                                 </div>
                                                 <div className="mt-3">
-                                                    { data && data.gradei.status === "waiting" ? (
+                                                    {data && data.gradei.status === "waiting" ? (
                                                         <div className="text-yellow-600 font-semibold">Chờ duyệt</div>
                                                     ) : data.gradei.status === "yes" ? (
                                                         <div className="text-green-600 font-semibold">Đã duyệt</div>

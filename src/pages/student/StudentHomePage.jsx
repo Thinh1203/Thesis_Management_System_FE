@@ -5,17 +5,18 @@ import DropDown from "../../components/DropDown";
 import { AiFillHome } from "react-icons/ai";
 import { useNavigate, Link } from "react-router-dom";
 import { getTheses } from "../../api/studentApi";
+import urlEmptyBox from "../../assets/image/empty_box.png";
 const StudentHomePage = () => {
     const [data, SetData] = useState(null);
     const navigate = useNavigate();
-    const handleNavigate = (id) => navigate("/student/topic/detail", {state: id});
-   
+    const handleNavigate = (id) => navigate("/student/topic/detail", { state: id });
+
     useEffect(() => {
         const fetchApi = async () => {
             const res = await getTheses();
             SetData(res);
         };
-        fetchApi(); 
+        fetchApi();
     }, []);
     return (
         <div className="grid grid-rows-6">
@@ -38,26 +39,38 @@ const StudentHomePage = () => {
             <div className="bg-blue-800 row-span-3 relative flex justify-center">
                 <div className="bg-slate-200 absolute w-5/6 h-56 mt-44 rounded-md shadow-xl shadow-slate-400 ">
                     <h3 className="mt-5 ml-8 font-semibold text-black text-xl">Khoá luận bảo vệ</h3>
-                    <div className="grid grid-cols-6 text-center my-5 font-semibold text-md">
-                        <div>Mã đề tài</div>
-                        <div>Tên đề tài</div>
-                        <div>Hạn nộp file báo cáo</div>
-                        <div>Hội đồng báo cáo</div>
-                        <div>Trạng thái file báo cáo</div>
-                        <div>Hành động</div>
-                    </div>
-                    <div className="grid grid-cols-6 text-center">
-                        <div className="">{data && data.topic.code}</div>
-                        <div className="">{data && data.topic.VietnameseName}</div>
-                        <div className="">{data && (new Date(data.endDate).toLocaleDateString('en-GB'))}</div>
-                        <div className="">{data && data.council.code}</div>
-                        <div className="">{
-                            data?.statusFile ? (<div className=" text-green-700">Đã nộp</div>) : (<div className=" text-red-700">Chưa nộp</div>)
-                        }</div>
-                        <div>
-                            <button className="p-2 bg-green-800 text-white rounded-md" onClick={() => handleNavigate(data.id)}>Xem chi tiết</button>
-                        </div>
-                    </div>
+                    {
+                        data && (
+                            <div className="grid grid-cols-7 text-center my-5 font-semibold text-md">
+                                <div>Mã đề tài</div>
+                                <div className="col-span-2">Tên đề tài</div>
+                                <div>Hạn nộp file báo cáo</div>
+                                <div>Hội đồng báo cáo</div>
+                                <div>Trạng thái file báo cáo</div>
+                                <div>Hành động</div>
+                            </div>
+                        )
+                    }
+                    {
+                        data ? (
+                            <div className="grid grid-cols-7 text-center">
+                                <div className="">CT550N{data && data.topic.id}</div>
+                                <div className="col-span-2">{data && data.topic.VietnameseName}</div>
+                                <div className="">{data && (new Date(data.endDate).toLocaleDateString('en-GB'))}</div>
+                                <div className="">HD{data && data.council.id}</div>
+                                <div className="">{
+                                    data?.statusFile ? (<div className=" text-green-700">Đã nộp</div>) : (<div className=" text-red-700">Chưa nộp</div>)
+                                }</div>
+                                <div>
+                                    <button className="p-2 bg-green-800 text-white rounded-md" onClick={() => handleNavigate(data.id)}>Xem chi tiết</button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="absolute w-7/12 flex flex-col items-end">
+                                <img className="w-1/4 h-1/4" src={urlEmptyBox} alt="Empty box" />
+                            </div>
+                        )
+                    }
                 </div>
             </div>
             <div className="bg-white row-span-2">

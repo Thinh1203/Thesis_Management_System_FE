@@ -18,13 +18,13 @@ const TopicListPage = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [newTopic, setNewTopic] = useState({
-        code: "", VietnameseName: "", EnglishName: ""
+        VietnameseName: "", EnglishName: ""
     });
     const [selectedFile, setSelectedFile] = useState(null);
     const [idEditTopic, setIdEditTopic] = useState(0);
     const [detailTopic, setDetailTopic] = useState([]);
     const [dataUpdate, setDataUpdate] = useState({
-        code: "", VietnameseName: "", EnglishName: ""
+        VietnameseName: "", EnglishName: ""
     });
     const [idRemoveTopic, setIdRemoveTopic] = useState(0);
     const [totalPagesQuery, setTotalPagesQuery] = useState(1);  // paginate page when query
@@ -115,9 +115,9 @@ const TopicListPage = () => {
     // create a topic //
     const handlePost = (e) => {
         e.preventDefault();
-        if (!newTopic.code) {
-            return toast.error("Mã đề tài không được để trống!");
-        }
+        // if (!newTopic.code) {
+        //     return toast.error("Mã đề tài không được để trống!");
+        // }
         if (!newTopic.VietnameseName) {
             return toast.error("Vui lòng điền tên đề tài!");
         }
@@ -217,7 +217,7 @@ const TopicListPage = () => {
                             <div >
                                 <input
                                     className="w-1/3 border-2 p-1 mx-4 mt-2 rounded-lg outline-none border-slate-400"
-                                    type="text" placeholder="Mã đề tài, tên đề tài ..."
+                                    type="text" placeholder="Tên đề tài, tên tiếng Anh"
                                     value={query}
                                     onChange={handleInputChange} />
                             </div>
@@ -252,19 +252,19 @@ const TopicListPage = () => {
                                     theme="light"
                                 />
                             </div>
-                            <div className="table-auto w-full border-t-2 border-b-2 grid grid-cols-8 border-y-slate-300 rounded-sm mt-2  text-center font-semibold">
+                            <div className="table-auto w-full border-t-2 border-b-2 grid grid-cols-12 border-y-slate-300 rounded-sm mt-2  text-center font-semibold">
                                 <div className="border-r-2 border-slate-300 py-1">Mã đề tài</div>
-                                <div className="border-r-2 col-span-3 border-slate-300 py-1">Tên tiếng Việt</div>
-                                <div className="col-span-3 border-r-2 border-slate-300 py-1">Tên tiếng Anh</div>
+                                <div className="border-r-2 col-span-5 border-slate-300 py-1">Tên tiếng Việt</div>
+                                <div className="col-span-5 border-r-2 border-slate-300 py-1">Tên tiếng Anh</div>
                                 <div className="py-1">Hành động</div>
                             </div>
-                            <div className="table-auto w-full border-b-2 grid grid-cols-8 border-y-slate-300 rounded-sm  text-center font-normal">
+                            <div className="table-auto w-full border-b-2 grid grid-cols-12 border-y-slate-300 rounded-sm  text-center font-normal">
                                 {(query && searchData) && (
                                     results.map((e) => (
                                         <React.Fragment key={e.id}>
-                                            <div className="border-r-2 border-slate-300 py-1">{e.code}</div>
-                                            <div className="border-r-2 col-span-3 border-slate-300 py-1">{e.VietnameseName}</div>
-                                            <div className="col-span-3 border-r-2 border-slate-300 py-1">{e.EnglishName}</div>
+                                            <div className="border-r-2 border-slate-300 py-1">CT550N{e.id}</div>
+                                            <div className="border-r-2 col-span-5 border-slate-300 py-1">{e.VietnameseName}</div>
+                                            <div className="col-span-5 border-r-2 border-slate-300 py-1">{e.EnglishName}</div>
                                             <div className="py-1">
                                                 <button onClick={() => { setIdEditTopic(e.id); setEditTopic(true); }} className="text-white bg-blue-700 rounded-sm hover:bg-blue-500 p-1 mr-1"><BiEdit /></button>
                                                 <button onClick={() => { setIdRemoveTopic(e.id); setRemoveTopic(true); }} className="text-white bg-red-700 rounded-sm hover:bg-red-500  p-1 mr-1"><BsFillTrashFill /></button>
@@ -277,9 +277,9 @@ const TopicListPage = () => {
                                 {
                                     (!query) && topicList?.map(e => (
                                         <React.Fragment key={e.id}>
-                                            <div className="border-r-2 border-slate-300 py-1">{e.code}</div>
-                                            <div className="border-r-2 col-span-3 border-slate-300 py-1">{e.VietnameseName}</div>
-                                            <div className="col-span-3 border-r-2 border-slate-300 py-1">{e.EnglishName}</div>
+                                            <div className="border-r-2 border-slate-300 py-1">CT550N{e.id}</div>
+                                            <div className="border-r-2 col-span-5 border-slate-300 py-1">{e.VietnameseName}</div>
+                                            <div className="col-span-5 border-r-2 border-slate-300 py-1">{e.EnglishName}</div>
                                             <div className="py-1">
                                                 <button onClick={() => { setIdEditTopic(e.id); setEditTopic(true); }} className="text-white bg-blue-700 rounded-sm hover:bg-blue-500 p-1 mr-1"><BiEdit /></button>
                                                 <button onClick={() => { setIdRemoveTopic(e.id); setRemoveTopic(true); }} className="text-white bg-red-700 rounded-sm hover:bg-red-500  p-1 mr-1"><BsFillTrashFill /></button>
@@ -368,19 +368,19 @@ const TopicListPage = () => {
                 <h1 className="font-bold text-xl px-2 pb-2">Thêm đề tài</h1>
                 <hr className=" border border-slate-300" />
                 <div className="grid grid-cols-3">
-                    <div className="grid grid-rows-3 p-4">
-                        <div className="font-semibold mt-1 p-1">Mã đề tài<span className="text-red-700 font-semibold">(*)</span></div>
+                    <div className="grid grid-rows-2 p-4">
+                        {/* <div className="font-semibold mt-1 p-1">Mã đề tài<span className="text-red-700 font-semibold">(*)</span></div> */}
                         <div className="font-semibold mt-1 p-1">Tên đề tài<span className="text-red-700 font-semibold">(*)</span></div>
-                        <div className="font-semibold mt-1 p-1">Tên tiếng anh<span className="text-red-700 font-semibold">(*)</span></div>
+                        <div className="font-semibold mt-1 p-1">Tên tiếng Anh<span className="text-red-700 font-semibold">(*)</span></div>
                     </div>
                     <div className="col-span-2 py-4 px-2">
-                        <div className="grid grid-rows-3">
-                            <div className="mt-1">
+                        <div className="grid grid-rows-2">
+                            {/* <div className="mt-1">
                                 <input
                                     className="w-full p-1 border border-slate-400 rounded-sm"
                                     type="text"
                                     onChange={(e) => setNewTopic({ ...newTopic, code: e.target.value })} />
-                            </div>
+                            </div> */}
                             <div className="mt-1">
                                 <input
                                     className="w-full p-1 border border-slate-400 rounded-sm"
@@ -397,7 +397,7 @@ const TopicListPage = () => {
                     </div>
                 </div>
                 <div className="grid grid-cols-2 mt-2">
-                    <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => { setNewTopic({ code: "", VietnameseName: "", EnglishName: "" }); setAddTopic(false); }}>Đóng</button>
+                    <button className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => { setNewTopic({ VietnameseName: "", EnglishName: "" }); setAddTopic(false); }}>Đóng</button>
                     <button className=" mx-10 py-2 bg-green-600 text-white rounded " onClick={(e) => { handlePost(e); }}>Lưu lại</button>
                 </div>
             </Modal >
@@ -406,20 +406,20 @@ const TopicListPage = () => {
                 <h1 className="font-bold text-xl px-2 pb-2">Sửa thông tin đề tài</h1>
                 <hr className=" border border-slate-300" />
                 <div className="grid grid-cols-3">
-                    <div className="grid grid-rows-3 p-4">
-                        <div className="font-semibold mt-1 p-1">Mã đề tài<span className="text-red-700 font-semibold">(*)</span></div>
+                    <div className="grid grid-rows-2 p-4">
+                        {/* <div className="font-semibold mt-1 p-1">Mã đề tài<span className="text-red-700 font-semibold">(*)</span></div> */}
                         <div className="font-semibold mt-1 p-1">Tên đề tài<span className="text-red-700 font-semibold">(*)</span></div>
                         <div className="font-semibold mt-1 p-1">Tên tiếng anh<span className="text-red-700 font-semibold">(*)</span></div>
                     </div>
                     <div className="col-span-2 py-4 px-2">
-                        <div className="grid grid-rows-3">
-                            <div className="mt-1">
+                        <div className="grid grid-rows-2">
+                            {/* <div className="mt-1">
                                 <input
                                     className="w-full p-1  border border-slate-400 rounded-sm"
                                     type="text"
                                     defaultValue={detailTopic.code}
                                     onChange={(e) => setDataUpdate({ ...dataUpdate, code: e.target.value })} />
-                            </div>
+                            </div> */}
                             <div className="mt-1">
                                 <input
                                     className="w-full p-1 border border-slate-400 rounded-sm"

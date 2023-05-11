@@ -49,7 +49,7 @@ const CouncilListPage = () => {
     const [idEditCouncil, setIdEditCouncil] = useState(0);
     const [editOne, setEditOne] = useState([]);
     const [updateData, setUpdateData] = useState({
-        timeStart: "", timeEnd: "", startDate: ""
+        code: "", timeStart: "", timeEnd: "", startDate: ""
     });
     const [idRemoveCouncil, setIdRemoveCouncil] = useState(0);
     // const [idDetailCouncil, setIdDetailCouncil] = useState(0);
@@ -93,6 +93,7 @@ const CouncilListPage = () => {
             const res = await getOneUpdate(idEditCouncil);
             setEditOne(res);
             setUpdateData({
+                code: editOne.code,
                 timeStart: editOne.timeStart,
                 timeEnd: editOne.timeEnd,
                 startDate: editOne.startDate
@@ -156,10 +157,13 @@ const CouncilListPage = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!newCouncil.code) return toast.error("Vui lòng nhập mã hội đồng!");
+        if (!newCouncil.code) return toast.error("Vui lòng nhập địa điểm hội đồng!");
         if (!newCouncil.timeStart) return toast.error("Vui lòng nhập thời gian bắt đầu!");
         if (!newCouncil.timeEnd) return toast.error("Vui lòng nhập thời gian kết thúc!");
         if (!newCouncil.shoolYearId) return toast.error("Vui lòng chọn niên khóa!");
+        if (newCouncil.user[0].userId === 0) return toast.error("Vui lòng thêm Chủ tịch hội đồng!");
+        if (newCouncil.user[1].userId === 0) return toast.error("Vui lòng thêm Giảng viên phản biện");
+        if (newCouncil.user[2].userId === 0) return toast.error("Vui lòng thêm Thư ký hội đồng!");
         const fetchApi = async () => {
 
             const res = await addCouncil(newCouncil);
@@ -167,6 +171,7 @@ const CouncilListPage = () => {
                 return toast.error(res.data.message);
             }
             toast.success("Thêm hội đồng thành công!");
+            setShowModal(false);
             const resetData = await getAll(page);
             setCouncilList(resetData.data);
             setTotalPages(resetData);
@@ -253,6 +258,9 @@ const CouncilListPage = () => {
                                             <th className="border-2 border-slate-400 font-semibold">
                                                 Mã hội đồng
                                             </th>
+                                            <th className="border-2 border-slate-400 font-semibold">
+                                                Địa điểm
+                                            </th>
                                             <th className="border-y-2 border-r-2 border-slate-400 font-semibold">
                                                 Thời gian bắt đầu
                                             </th>
@@ -277,6 +285,7 @@ const CouncilListPage = () => {
                                         {
                                             councilList?.map(e => (
                                                 <tr className="text-center" key={e.id}>
+                                                    <td className="border-2 border-slate-400 py-2" >HD{e.id}</td>
                                                     <td className="border-2 border-slate-400 py-2" >{e.code}</td>
                                                     <td className="border-2 border-slate-400 py-2" >{e.timeStart.slice(0, -3)}</td>
                                                     <td className="border-2 border-slate-400 py-2" >{e.timeEnd.slice(0, -3)}</td>
@@ -390,7 +399,7 @@ const CouncilListPage = () => {
                 <div className="text-left w-100">
                     <h3 className="text-2xl font-semibold text-red-700">Tạo hội đồng</h3>
                     <div className="p-2">
-                        <h4 className="text-md font-semibold">Mã hội đồng</h4>
+                        <h4 className="text-md font-semibold">Địa điểm diễn ra</h4>
                         <input
                             type="text"
                             className="w-full border-2 p-2 border-slate-400 rounded-sm mt-2"
@@ -480,14 +489,25 @@ const CouncilListPage = () => {
 
                     <div className="grid grid-cols-2 mt-2">
                         <button className=" mx-2 py-2 bg-gray-500 text-white rounded " onClick={() => reSetData()}>Đóng</button>
-                        <button className=" mx-2 py-2 bg-green-600 text-white rounded " onClick={(e) => { handleSubmit(e); setShowModal(false); }}>Lưu lại</button>
+                        <button className=" mx-2 py-2 bg-green-600 text-white rounded " onClick={(e) => { handleSubmit(e);  }}>Lưu lại</button>
                     </div>
 
                 </div>
             </Modal>
             <Modal isVisible={editCouncil}>
                 <div className="text-left w-100">
-                    <h3 className="text-2xl font-semibold text-red-700">Tạo hội đồng</h3>
+                    <h3 className="text-2xl font-semibold text-red-700">Sửa thông tin hội đồng</h3>
+
+                    <div className="p-2">
+                        <h4 className="text-md font-semibold">Địa điểm diễn ra</h4>
+                        <input
+                            type="text"
+                            className="w-full border-2 p-2 border-slate-400 rounded-sm mt-2"
+                            defaultValue={editOne.code}
+                            onChange={(e) => setUpdateData({ ...updateData, code: e.target.value })}
+                        />
+                    </div>
+
                     <div className="p-2">
                         <h4 className="text-md font-semibold">Giờ bắt đầu</h4>
                         <input

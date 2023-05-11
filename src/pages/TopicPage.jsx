@@ -86,7 +86,7 @@ const TopicPage = () => {
                     {
                         !query && data?.map((e) => (
                             <React.Fragment key={e.id}>
-                                <div className="my-1">{e.topic.code}</div>
+                                <div className="my-1">CT550N{e.topic.id}</div>
                                 <div className="col-span-4 my-1">{e.topic.VietnameseName}</div>
                                 <div className="col-span-4 my-1">{e.topic.EnglishName}</div>
                                 <div className="col-span-2 my-1">{e.student.fullName}</div>
@@ -97,7 +97,7 @@ const TopicPage = () => {
                     {
                         (query && searchData) && (results?.map(e => (
                             <React.Fragment key={e.id}>
-                                <div className="my-1">{e.topic.code}</div>
+                                <div className="my-1">CT550N{e.topic.id}</div>
                                 <div className="col-span-4 my-1">{e.topic.VietnameseName}</div>
                                 <div className="col-span-4 my-1">{e.topic.EnglishName}</div>
                                 <div className="col-span-2 my-1">{e.student.fullName}</div>

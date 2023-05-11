@@ -87,7 +87,7 @@ const StudentTopicDetail = () => {
                                 {
                                     data && (
                                         <React.Fragment>
-                                            <div> Mã đề tài: {data.topic.code}</div>
+                                            <div> Mã đề tài: CT550N{data.topic.id}</div>
                                             <div > Tên đề tài: {data.topic.VietnameseName}</div>
                                             <div > Tên tiếng anh: {data.topic.EnglishName}</div>
                                             <div > Giảng viên hướng dẫn: {data.teacher.fullName}</div>

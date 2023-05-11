@@ -49,7 +49,7 @@ const CompleteTopic = () => {
                                 {
                                     data && data?.map((e) => (
                                         <React.Fragment key={e.id}>
-                                            <div className="mx-2 text-center mb-2">{e.topic.code}</div>
+                                            <div className="mx-2 text-center mb-2">CT550N{e.topic.id}</div>
                                             <div className="text-center col-span-3 mb-2">{e.topic.VietnameseName}</div>
                                             <div className="text-center col-span-2 mb-2">{e.topic.EnglishName}</div>
                                             <div className="col-span-2 text-center  mb-2">{e.student.fullName}</div>

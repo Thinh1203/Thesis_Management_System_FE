@@ -112,6 +112,7 @@ const ProcessingTopicPage = () => {
     useEffect(() => {
         const fetchData = async () => {
             const res = await getAllStudent();
+            
             setListStudent(res);
 
         };
@@ -202,6 +203,7 @@ const ProcessingTopicPage = () => {
             toast.error("Có lỗi xảy ra!");
         }
     }
+
     return (
         <div>
             <div className="flex">
@@ -219,7 +221,7 @@ const ProcessingTopicPage = () => {
                             <div >
                                 <input
                                     className="w-1/3 border-2 p-1 mx-4 mt-2 rounded-lg outline-none border-slate-400"
-                                    type="text" placeholder="Mã đề tài, tên đề tài, sinh viên thực hiện ..."
+                                    type="text" placeholder="Tên đề tài, tên tiếng Anh, sinh viên thực hiện ..."
                                     value={query}
                                     onChange={handleInputChange} />
                             </div>
@@ -261,19 +263,19 @@ const ProcessingTopicPage = () => {
                             </div>
                             <div className="table-auto w-full border-b-2 grid grid-cols-11 border-y-slate-300 rounded-sm  font-normal">
                                 {
-                                    (!query) && (data?.map(e => (
+                                    (!query && data.length > 0) && (data?.map(e => (
                                         <React.Fragment key={e.id}>
-                                            <div className="border-r-2 ml-2 border-slate-300 py-1 text-center">{e.topic.code}</div>
-                                            <div className="border-r-2 ml-2 col-span-2 border-slate-300 py-1">{e.topic.VietnameseName}</div>
-                                            <div className="col-span-2 ml-2 border-r-2 border-slate-300 py-1">{e.topic.EnglishName}</div>
-                                            <div className="py-1 ml-2 border-r-2 border-slate-300">{e.student.fullName}</div>
-                                            <div className="py-1 ml-2 border-r-2 border-slate-300">{e.teacher.fullName}</div>
+                                            <div className="border-r-2 ml-2 border-slate-300 py-1 text-center">CT550N{e.topic?.id}</div>
+                                            <div className="border-r-2 ml-2 col-span-2 border-slate-300 py-1">{e.topic?.VietnameseName}</div>
+                                            <div className="col-span-2 ml-2 border-r-2 border-slate-300 py-1">{e.topic?.EnglishName}</div>
+                                            <div className="py-1 ml-2 border-r-2 border-slate-300">{e.student?.fullName}</div>
+                                            <div className="py-1 ml-2 border-r-2 border-slate-300">{e.teacher?.fullName}</div>
                                             <div className="py-1 ml-2 border-r-2 border-slate-300 text-center">{new Date(e.endDate).toLocaleDateString('en-GB')}</div>
-                                            <div className="py-1 ml-2 border-r-2 border-slate-300 text-center">{e.council.code}</div>
-                                            <div className="py-1 ml-2 border-r-2 border-slate-300 text-center"><p>{e.shoolYear.year}</p><p>Học kỳ - {e.shoolYear.semester}</p></div>
+                                            <div className="py-1 ml-2 border-r-2 border-slate-300 text-center">HD{e.council?.id}</div>
+                                            <div className="py-1 ml-2 border-r-2 border-slate-300 text-center"><p>{e.shoolYear?.year}</p><p>Học kỳ - {e.shoolYear?.semester}</p></div>
                                             <div className="py-1 text-center">
                                                 <button onClick={() => { setIdTheses(e.id); setEditThesis(true); }} className="text-white bg-blue-700 rounded-sm hover:bg-blue-500 p-1 mr-1"><BiEdit /></button>
-                                                <button onClick={() => setRemoveThesis(true)} className="text-white bg-red-700 rounded-sm hover:bg-red-500  p-1 mr-1"><BsFillTrashFill /></button>
+                                                {/* <button onClick={() => setRemoveThesis(true)} className="text-white bg-red-700 rounded-sm hover:bg-red-500  p-1 mr-1"><BsFillTrashFill /></button> */}
                                             </div>
                                         </React.Fragment>
                                     )))
@@ -281,17 +283,17 @@ const ProcessingTopicPage = () => {
                                 {
                                     (query && searchData) && (results?.map(e => (
                                         <React.Fragment key={e.id}>
-                                            <div className="border-r-2 ml-2 border-slate-300 py-1 text-center">{e.topic.code}</div>
+                                            <div className="border-r-2 ml-2 border-slate-300 py-1 text-center">CT550N{e.topic.id}</div>
                                             <div className="border-r-2 ml-2 col-span-2 border-slate-300 py-1">{e.topic.VietnameseName}</div>
                                             <div className="col-span-2 ml-2 border-r-2 border-slate-300 py-1">{e.topic.EnglishName}</div>
                                             <div className="py-1 ml-2 border-r-2 border-slate-300">{e.student.fullName}</div>
                                             <div className="py-1 ml-2 border-r-2 border-slate-300">{e.teacher.fullName}</div>
                                             <div className="py-1 ml-2 border-r-2 border-slate-300 text-center">{new Date(e.endDate).toLocaleDateString('en-GB')}</div>
-                                            <div className="py-1 ml-2 border-r-2 border-slate-300 text-center">{e.council.code}</div>
+                                            <div className="py-1 ml-2 border-r-2 border-slate-300 text-center">HD{e.council.id}</div>
                                             <div className="py-1 ml-2 border-r-2 border-slate-300 text-center"><p>{e.shoolYear.year}</p><p>Học kỳ - {e.shoolYear.semester}</p></div>
                                             <div className="py-1 text-center">
                                                 <button onClick={() => { setIdTheses(e.id); setEditThesis(true); }} className="text-white bg-blue-700 rounded-sm hover:bg-blue-500 p-1 mr-1"><BiEdit /></button>
-                                                <button onClick={() => setRemoveThesis(true)} className="text-white bg-red-700 rounded-sm hover:bg-red-500  p-1 mr-1"><BsFillTrashFill /></button>
+                                                {/* <button onClick={() => setRemoveThesis(true)} className="text-white bg-red-700 rounded-sm hover:bg-red-500  p-1 mr-1"><BsFillTrashFill /></button> */}
                                             </div>
                                         </React.Fragment>
                                     )))
@@ -413,7 +415,7 @@ const ProcessingTopicPage = () => {
                             className="w-full border-2 p-1 border-slate-400 rounded-sm mt-2">
                             {
                                 listCouncil?.map(e => (
-                                    <option key={e.id} value={e.id}>{e.code}</option>
+                                    <option key={e.id} value={e.id}>HD{e.id}</option>
                                 ))
                             }
                         </select>
@@ -441,7 +443,7 @@ const ProcessingTopicPage = () => {
             </Modal >
             <Modal isVisible={editThesis}>
                 <div className="text-left w-100">
-                    <h3 className="text-2xl font-semibold text-red-700">Thêm khóa luận</h3>
+                    <h3 className="text-2xl font-semibold text-red-700">Chỉnh sửa thông tin</h3>
                     <div className="p-2">
                         <h4 className="text-md font-semibold">Tên đề tài</h4>
                         <select
@@ -461,7 +463,7 @@ const ProcessingTopicPage = () => {
                             onChange={(e) => setUpdateTheses({ ...updateTheses, studentId: e.target.value })}
                             className="border-2 w-full border-zinc-500 rounded-sm p-1 my-1">
                             {
-                                listStudent?.map(e => (
+                                listStudent && listStudent?.map(e => (
                                     <option key={e.id} selected={e.id === oneTheses?.student.id} value={e.id}>{e.fullName}</option>
                                 ))
                             }
@@ -498,7 +500,7 @@ const ProcessingTopicPage = () => {
                             className="w-full border-2 p-1 border-slate-400 rounded-sm mt-2">
                             {
                                 listCouncil?.map(e => (
-                                    <option key={e.id} selected={e.id === oneTheses?.council.id} value={e.id}>{e.code}</option>
+                                    <option key={e.id} selected={e.id === oneTheses?.council.id} value={e.id}>HD{e.id}</option>
                                 ))
                             }
                         </select>

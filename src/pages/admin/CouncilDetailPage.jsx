@@ -4,78 +4,7 @@ import TeacherLeftDashboard from "../../components/TeacherLeftDashboard";
 import React, { useEffect, useState } from "react";
 import { getOneCouncil } from "../../api/adminApi/council";
 const CouncilDetailPage = () => {
-    const council1 = [
-        {
-            "id": 1,
-            "code": "HD001",
-            "timeStart": "7:30",
-            "timeEnd": "11:30",
-            "startDate": "25/04/2023",
-            "position": {
-                "chutich": "Nguyễn văn A",
-                "thuky": "Nguyễn Thị B",
-                "phanbien": "Huỳnh Thị C"
-            },
-            "detai": {
-                "maDetai": "DT001",
-                "tentv": "Website thương mại điện tử kinh doanh quần áo ",
-                "tenta": "Hệ thống bảo vệ luan van tot nghie",
-                "name": "Nguyễn thị tường vy",
-                "gvhd": "Lâm Nhựt Khang"
-            },
-            "year": {
-                "nam": "2023-2024",
-                "hocky": "1"
-            }
-        },
-        {
-            "id": 1,
-            "code": "HD001",
-            "timeStart": "7:30",
-            "timeEnd": "11:30",
-            "startDate": "25/04/2023",
-            "position": {
-                "chutich": "Nguyễn văn D",
-                "thuky": "Nguyễn Thị E",
-                "phanbien": "Huỳnh Thị F"
-            },
-            "detai": {
-                "maDetai": "DT002",
-                "tentv": "website",
-                "tenta": "website",
-                "name": "Nguyễn thị tường vy",
-                "gvhd": "Lâm Nhựt Khang"
-            },
-            "year": {
-                "nam": "2023-2024",
-                "hocky": "1"
-            }
-        },
-        {
-            "id": 1,
-            "code": "HD001",
-            "timeStart": "7:30",
-            "timeEnd": "11:30",
-            "startDate": "25/04/2023",
-            "position": {
-                "chutich": "Nguyễn văn A",
-                "thuky": "Nguyễn Thị B",
-                "phanbien": "Huỳnh Thị C"
-            },
-            "detai": {
-                "maDetai": "DT001",
-                "tentv": "Hệ thống bảo vệ",
-                "tenta": "Hệ thống bảo vệ",
-                "name": "Nguyễn thị tường vy",
-                "gvhd": "Lâm Nhựt Khang"
-            },
-            "year": {
-                "nam": "2023-2024",
-                "hocky": "1"
-            }
-        },
-
-    ]
+    
     const [councilDetail, setCouncilDetail] = useState({});
     const location = useLocation();
     const id = location.state;
@@ -102,7 +31,7 @@ const CouncilDetailPage = () => {
                         </div>
                         <div className="rounded-xl h-full shadow-lg shadow-slate-400 py-4 mx-4">
                             <div className="mx-5">
-                                <h2 className="text-red-700 text-2xl font-semibold">{councilDetail.code}</h2>
+                                <h2 className="text-red-700 text-2xl font-semibold">HD{councilDetail && councilDetail.id}</h2>
                             </div>
                             <div className="p-2 w-4/6 text-center rounded-md shadow-lg shadow-slate-400 mx-auto my-4">
                                 <div className="grid grid-cols-3 font-semibold text-md ">
@@ -141,7 +70,7 @@ const CouncilDetailPage = () => {
                                     {
                                         councilDetail && councilDetail.theses?.map(e => (
                                             <React.Fragment key={e.id}>
-                                                <div className="text-center">{e.topic.code}</div>
+                                                <div className="text-center">CT550N{e.topic.id}</div>
                                                 <div className="col-span-3 px-2 text-center">{e.topic.VietnameseName}</div>
                                                 <div className="col-span-2 mx-2 text-center">{e.topic.EnglishName}</div>
                                                 <div className="col-span-2 text-center">{e.student.fullName}</div>

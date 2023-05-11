@@ -5,23 +5,28 @@ import Paginate from "../../components/Paginate";
 import React, { useState, useEffect } from "react";
 import FileDownload from "js-file-download";
 import { download, fileName } from "../../api/studentApi";
-import { FaDownload } from "react-icons/fa";
+import { FaDownload, FaFileExport } from "react-icons/fa";
 import urlEmptyBox from "../../assets/image/empty_box.png"
+import { useNavigate } from "react-router-dom";
 const CompleteTopicPage = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [data, setData] = useState([]);
     const [query, setQuery] = useState("");
+
     const [totalPagesQuery, setTotalPagesQuery] = useState(1);
     const [pageQuery, setPageQuery] = useState(1);
     const [searchData, setSearchData] = useState(true);
     const [results, setResults] = useState([]);
+
+    const navigate = useNavigate();
+
+
     useEffect(() => {
         const getAll = async () => {
             const res = await listThesesComplete(page);
             setData(res.data);
             setTotalPages(res);
-            console.log(res.data);
         }
         getAll();
     }, [page]);
@@ -30,6 +35,7 @@ const CompleteTopicPage = () => {
         const nameFile = await fileName(id);
         FileDownload(file.data, nameFile);
     };
+
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages.lastPage) {
             setPage(newPage);
@@ -79,12 +85,12 @@ const CompleteTopicPage = () => {
                         </div>
                         <div className="rounded-xl h-full shadow-lg shadow-slate-400 py-4 mx-4">
                             <div >
-                                <input 
-                                className="w-1/3 border-2 p-1 mx-4 mt-2 rounded-lg outline-none border-slate-400" 
-                                type="text" 
-                                value={query}
-                                onChange={handleInputChange}
-                                placeholder="Mã đề tài, tên đề tài ..." />
+                                <input
+                                    className="w-1/3 border-2 p-1 mx-4 mt-2 rounded-lg outline-none border-slate-400"
+                                    type="text"
+                                    value={query}
+                                    onChange={handleInputChange}
+                                    placeholder="Tên đề tài, tên tiếng Anh, sinh viên thực hiện" />
                             </div>
                             <div className="grid grid-cols-3">
                                 <div className="ml-4 mt-2">
@@ -94,40 +100,45 @@ const CompleteTopicPage = () => {
                             <div className="table-auto w-full border-t-2 border-b-2 grid grid-cols-12 border-y-slate-300 rounded-sm mt-2  text-center font-semibold">
                                 <div className="border-r-2 border-slate-300 py-1">Mã đề tài</div>
                                 <div className="border-r-2 col-span-3 border-slate-300 py-1">Tên đề tài</div>
-                                <div className="col-span-3 border-r-2 border-slate-300 py-1">Tên tiếng Anh</div>
+                                <div className="col-span-2 border-r-2 border-slate-300 py-1">Tên tiếng Anh</div>
                                 <div className="py-1 col-span-2 border-r-2 border-slate-300">Sinh viên thực hiện</div>
-
                                 <div className="py-1 border-r-2 border-slate-300">File báo cáo</div>
                                 <div className="py-1 border-r-2 border-slate-300">Niên khóa</div>
                                 <div className="py-1 border-r-2 border-slate-300">Học kỳ</div>
+                                <div className="py-1 border-r-2 border-slate-300">Chi tiết điểm</div>
                             </div>
 
                             <div className="table-auto w-full border-b-2 grid grid-cols-12 border-y-slate-300 rounded-sm  font-normal">
                                 {
                                     (!query) && data?.map(e => (
                                         <React.Fragment key={e.id}>
-                                            <div className="border-r-2 ml-2 border-slate-300 py-1">{e.topic.code}</div>
+                                            <div className="border-r-2 ml-2 border-slate-300 py-1">CT550N{e.topic.id}</div>
                                             <div className="border-r-2 ml-2 col-span-3 border-slate-300 py-1">{e.topic.VietnameseName}</div>
-                                            <div className="col-span-3 ml-2 border-r-2 border-slate-300 py-1">{e.topic.EnglishName}</div>
+                                            <div className="col-span-2 ml-2 border-r-2 border-slate-300 py-1">{e.topic.EnglishName}</div>
                                             <div className="py-1 ml-2 col-span-2 border-r-2 text-center border-slate-300">{e.student.fullName}</div>
-
                                             <div className="py-1 ml-2 border-r-2 border-slate-300 text-center">
-                                                <button onClick={() => downloadFile(e.id)} className="flex">
-                                                    <div className="mr-1 mt-1 text-blue-700"><FaDownload /></div>
-                                                    <div className="text-blue-700">Tải xuống</div>
+                                                <button onClick={() => downloadFile(e.id)} className="flex ">
+                                                    <div className="mr-1 mt-1 text-blue-800 hover:text-blue-500"><FaDownload /></div>
+                                                    <div className="text-blue-800 hover:text-blue-500">Tải xuống</div>
                                                 </button>
                                             </div>
                                             <div className="py-1 ml-2 border-r-2 border-slate-300">{e.shoolYear.year} </div>
                                             <div className="py-1 ml-2 border-r-2 border-slate-300 text-center">{e.shoolYear.semester}</div>
+                                            <div className="py-1 border-slate-300 text-xl mx-auto text-blue-800 hover:text-blue-500">
+                                                <button onClick={() => navigate("/admin/detailScore", { state: e.id })}>
+                                                    <FaFileExport />
+                                                </button>
+
+                                            </div>
                                         </React.Fragment>
                                     ))
                                 }
-                                 {
+                                {
                                     (query && searchData) && (results?.map(e => (
                                         <React.Fragment key={e.id}>
-                                            <div className="border-r-2 ml-2 border-slate-300 py-1">{e.topic.code}</div>
+                                            <div className="border-r-2 ml-2 border-slate-300 py-1">CT550N{e.topic.id}</div>
                                             <div className="border-r-2 ml-2 col-span-3 border-slate-300 py-1">{e.topic.VietnameseName}</div>
-                                            <div className="col-span-3 ml-2 border-r-2 border-slate-300 py-1">{e.topic.EnglishName}</div>
+                                            <div className="col-span-2 ml-2 border-r-2 border-slate-300 py-1">{e.topic.EnglishName}</div>
                                             <div className="py-1 ml-2 col-span-2 border-r-2 text-center border-slate-300">{e.student.fullName}</div>
 
                                             <div className="py-1 ml-2 border-r-2 border-slate-300 text-center">
@@ -138,11 +149,16 @@ const CompleteTopicPage = () => {
                                             </div>
                                             <div className="py-1 ml-2 border-r-2 border-slate-300">{e.shoolYear.year} </div>
                                             <div className="py-1 ml-2 border-r-2 border-slate-300 text-center">{e.shoolYear.semester}</div>
+                                            <div className="py-1 border-slate-300 text-xl mx-auto text-blue-800 hover:text-blue-500">
+                                                <button onClick={() => navigate("/admin/detailScore", { state: e.id })}>
+                                                    <FaFileExport />
+                                                </button>
+                                            </div>
                                         </React.Fragment>
                                     )))
                                 }
                             </div>
-                          
+
                             {(query && !searchData) &&
                                 (<div className="flex flex-col items-center table-auto w-ful border-b-2 border-b-slate-300 rounded-sm text-center">
                                     <h1 className="text-red-500 text-2xl font-semibold py-2">Không có kết quả phù hợp!</h1>
@@ -173,7 +189,7 @@ const CompleteTopicPage = () => {
                                     </div>
                                 )
                             }
-                             {!query && (<div className="flex justify-center align-middle mt-4">
+                            {!query && (<div className="flex justify-center align-middle mt-4">
                                 <button
                                     type="button"
                                     onClick={() => handlePageChange(page - 1)}
@@ -197,6 +213,7 @@ const CompleteTopicPage = () => {
                             )}
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

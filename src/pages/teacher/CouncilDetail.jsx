@@ -128,7 +128,7 @@ const CouncilDetail = () => {
                                 {
                                     data && data?.map((e) => (
                                         <React.Fragment key={e.id}>
-                                            <div className="mx-2 text-center">{e.topic.code}</div>
+                                            <div className="mx-2 text-center">CT550N{e.topic.id}</div>
                                             <div className="col-span-3 text-center">{e.topic.VietnameseName}</div>
                                             <div className="text-center px-4 col-span-3">{e.topic.EnglishName}</div>
                                             <div className="text-center col-span-2">{e.student.fullName}</div>

@@ -10,7 +10,7 @@ const TopicDetail = () => {
         const fetchData = async () => {
             const res = await getOneTheses(id);
             setData(res.data);
-            console.log(res.data);
+
         };
         fetchData();
     }, []);
@@ -32,17 +32,17 @@ const TopicDetail = () => {
                             <div className="my-2">Sinh viên thực hiện:</div>
                             <div className="my-2">Niên khóa:</div>
                             <div className="my-2">Học kỳ:</div>
-                            <div className="my-2">Mã hội đồng:</div>
+                            <div className="my-2">Hội đồng bảo vệ LVTN:</div>
                         </div>
                         <div className="font-normal my-6">
-                            <div className="my-2">{data?.topic.code}</div>
+                            <div className="my-2">CT550N{data?.topic.id}</div>
                             <div className="my-2 mr-2">{data?.topic.VietnameseName}</div>
                             <div className="my-2 mr-2">{data?.topic.EnglishName}</div>
                             <div className="my-2">{data?.teacher.fullName}</div>
                             <div className="my-2">{data?.student.fullName}</div>
                             <div className="my-2">{data?.shoolYear.year}</div>
                             <div className="my-2">{data?.shoolYear.semester}</div>
-                            <div className="my-2">{data?.council.code}</div>
+                            <div className="my-2">HD{data?.council.id}</div>
                         </div>
                     </div>
                 </div>

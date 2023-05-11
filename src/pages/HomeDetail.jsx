@@ -20,7 +20,7 @@ const HomeDetail = () => {
         <div>
             <Header />
             <div className="w-1/4 h-12 shadow-xl p-3 rounded-md shadow-slate-500 m-auto mt-5 text-center border-2 border-slate-300">
-                <h1 className="text-red-500 font-semibold text-lg border">CHI TIẾT HỘI ĐỒNG <span className="text-cyan-600">{data && data?.code}</span></h1>
+                <h1 className="text-red-500 font-semibold text-lg border">CHI TIẾT HỘI ĐỒNG <span className="text-cyan-600">HD{data && data?.id}</span></h1>
             </div>
             <div className="rounded-xl h-full shadow-lg text-center shadow-slate-500 py-4 mt-5 mx-4">
                 <div className="grid grid-cols-12">
@@ -47,12 +47,14 @@ const HomeDetail = () => {
                             )}
                     </div>
                     <div className="col-span-3 grid grid-cols-2 rounded-md shadow-lg shadow-slate-500 mr-8 my-4 border border-slate-400 p-2">
-                        <div className="grid grid-rows-3">
+                        <div className="grid grid-rows-4">
+                            <div className="border-b border-r border-slate-400 font-semibold">Địa điểm</div>
                             <div className="border-b border-r border-slate-400 font-semibold">Ngày diễn ra</div>
                             <div className="border-b border-r border-slate-400 font-semibold">Thời gian bắt đầu</div>
                             <div className="border-r border-slate-400 font-semibold">Thời gian kết thúc</div>
                         </div>
-                        <div className="grid grid-rows-3">
+                        <div className="grid grid-rows-4">
+                            <div className="border-b border-slate-400 ">{data && data.code}</div>
                             <div className="border-b border-slate-400">{data && (new Date(data.startDate).toLocaleDateString('en-GB'))}</div>
                             <div className="border-b border-slate-400">{data && data.timeStart.slice(0, -3)}</div>
                             <div className="border-slate-400">{data && data.timeEnd.slice(0, -3)}</div>
@@ -75,7 +77,7 @@ const HomeDetail = () => {
                         {
                             data && data.theses?.map(e => (
                                 <React.Fragment key={e.id}>
-                                    <div className="text-center">{e.topic.code}</div>
+                                    <div className="text-center">CT550N{e.topic.id}</div>
                                     <div className="col-span-3 px-2 text-center">{e.topic.VietnameseName}</div>
                                     <div className="col-span-2 text-center ">{e.topic.EnglishName}</div>
                                     <div className="col-span-2 text-center">{e.student.fullName}</div>

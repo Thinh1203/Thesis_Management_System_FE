@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import DropDown from "../../components/DropDown";
 import Modal from "../../components/Modal";
 import TeacherLeftDashboard from "../../components/TeacherLeftDashboard";
-import { IoMdAddCircleOutline, IoMdRemoveCircleOutline } from "react-icons/io";
+import { IoMdAddCircleOutline } from "react-icons/io";
 import { BiExport, BiEdit } from "react-icons/bi";
 import { AiFillFileText } from "react-icons/ai";
 import { BsFillTrashFill, BsExclamationOctagonFill } from "react-icons/bs";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaLockOpen, FaLock } from "react-icons/fa";
-import { createAccount, getListTeacher, search, updateStatus, deleteAccount, roleAccount, getOneTeacher, updateTeacherInformation, uploadFile } from "../../api/adminApi/teacherPage";
+import { createAccount, getListTeacher, search, updateStatus, deleteAccount, roleAccount, getOneTeacher, updateTeacherInformation, uploadFile, getAllTopicTutorial } from "../../api/adminApi/teacherPage";
 import { checkEmail, checkPhoneNumber } from "../../utils/validation";
 import urlEmptyBox from "../../assets/image/empty_box.png"
 import Paginate from "../../components/Paginate";
@@ -41,7 +41,15 @@ const TeacherListPage = () => {
         email: "", fullName: "", numberPhone: "", address: "", gender: "", roleId: 0
     });
     const [selectedFile, setSelectedFile] = useState(null);
-
+    const [topicComplete, seTopicComplete] = useState([]);
+    const [idTeacher, setIdTeacher] = useState(0);
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getAllTopicTutorial(idTeacher);
+            seTopicComplete(res.data);
+        };
+        fetchData();
+    }, [idTeacher])
     useEffect(() => {
         const getAll = async () => {
             const res = await getListTeacher(page);
@@ -68,7 +76,7 @@ const TeacherListPage = () => {
                 } else {
                     setSearchData(false);
                 }
-                
+
             } else {
                 setResults([]);
             }
@@ -103,7 +111,7 @@ const TeacherListPage = () => {
             }
             let newUserList = await getListTeacher(page);
             if (newUserList.statusCode === 400) {
-                newUserList = await getListTeacher(page-1);
+                newUserList = await getListTeacher(page - 1);
                 setPage(page - 1);
                 setUser(newUserList.data);
                 setTotalPages(newUserList);
@@ -118,44 +126,7 @@ const TeacherListPage = () => {
             toast.error("Có lỗi xảy ra!");
         }
     };
-    const topic = [
-        {
-            "id": 1,
-            "code": "DT001",
-            "name": "Hệ thống quản lý thi trắc nghiệm",
-            "nameEnglish": "Hệ thống quản lý thi trắc nghiệm",
-            "courses": "2023-2024",
-            "sv": "Nuyễn văn a",
-            "semesterm": "1",
-        },
-        {
-            "id": 2,
-            "code": "DT001",
-            "name": "Hệ thống quản lý thi trắc nghiệm",
-            "nameEnglish": "Hệ thống quản lý thi trắc nghiệm",
-            "courses": "2023-2024",
-            "sv": "Nuyễn văn a",
-            "semesterm": "1",
-        },
-        {
-            "id": 3,
-            "code": "DT001",
-            "name": "Hệ thống quản lý thi trắc nghiệm",
-            "nameEnglish": "Hệ thống quản lý thi trắc nghiệm",
-            "courses": "2023-2024",
-            "sv": "Nuyễn văn a",
-            "semesterm": "1",
-        },
-        {
-            "id": 4,
-            "code": "DT001",
-            "name": "Hệ thống quản lý thi trắc nghiệm",
-            "nameEnglish": "Hệ thống quản lý thi trắc nghiệm",
-            "courses": "2023-2024",
-            "sv": "Nuyễn văn a",
-            "semesterm": "1",
-        },
-    ];
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!account) return toast.error("Tài khoản không được để trống!");
@@ -206,15 +177,15 @@ const TeacherListPage = () => {
             setUser(newUserList.data);
             const response = await search(query);
             setResults(response);
-            
+
         } else {
             toast.error("Có lỗi xảy ra!");
         }
     }
     const handleFileInput = (event) => {
         setSelectedFile(event.target.files[0]);
-      }
-    const postFile = async(e) => {
+    }
+    const postFile = async (e) => {
         e.preventDefault();
         const fetchApi = async () => {
             const res = await uploadFile(selectedFile);
@@ -307,7 +278,7 @@ const TeacherListPage = () => {
                                         <div className="border-r-2 border-slate-300 py-1">{e.numberPhone}</div>
                                         <div className="py-1 border-r-2 border-slate-300">{e.role.description}</div>
                                         <div className="py-1  border-r-2 border-slate-300">
-                                            <button onClick={() => setTopicDetailModal(true)} className="text-white bg-blue-700 hover:bg-blue-500 rounded-sm p-1"><AiFillFileText /></button>
+                                            <button onClick={() => { setIdTeacher(e.id); setTopicDetailModal(true);}} className="text-white bg-blue-700 hover:bg-blue-500 rounded-sm p-1"><AiFillFileText /></button>
                                         </div>
                                         <div className="py-1">
                                             <button onClick={() => { setIdUser(e.id); setEditProfileModal(true); }} className="text-white bg-blue-700 rounded-sm hover:bg-blue-500 p-1 mr-1"><BiEdit /></button>
@@ -341,7 +312,7 @@ const TeacherListPage = () => {
                                     <div className="border-r-2 border-slate-300 py-1">{e.numberPhone}</div>
                                     <div className="py-1 border-r-2 border-slate-300">{e.role.description}</div>
                                     <div className="py-1  border-r-2 border-slate-300">
-                                        <button onClick={() => setTopicDetailModal(true)} className="text-white bg-blue-700 hover:bg-blue-500 rounded-sm p-1"><AiFillFileText /></button>
+                                        <button onClick={() => { setIdTeacher(e.id); setTopicDetailModal(true);}}  className="text-white bg-blue-700 hover:bg-blue-500 rounded-sm p-1"><AiFillFileText /></button>
                                     </div>
                                     <div className="py-1">
                                         <button onClick={() => { setIdUser(e.id); setEditProfileModal(true); }} className="text-white bg-blue-700 rounded-sm hover:bg-blue-500 p-1 mr-1"><BiEdit /></button>
@@ -400,7 +371,7 @@ const TeacherListPage = () => {
                         <p className="text-red-700 font-semibold"> (*)</p>
                     </div>
                     <div className="mx-5 mt-1 border-2 border-slate-300 rounded-sm">
-                        <input className="p-2" type="file"  onChange={handleFileInput} />
+                        <input className="p-2" type="file" onChange={handleFileInput} />
                     </div>
                     <div className="grid grid-cols-2 mt-2">
                         <button type="button" className=" mx-10 py-2 bg-gray-500 text-white rounded " onClick={() => setAccountListModal(false)}>Đóng</button>
@@ -577,39 +548,34 @@ const TeacherListPage = () => {
             <Modal isVisible={topicDetailModal}>
                 <div className="flex justify-between">
                     <h1 className="font-bold text-2xl px-2 pb-2">Danh sách đề tài đã hướng dẫn</h1>
-                    <button className="border px-2 font-semibold text-sm text-white bg-red-700 hover:bg-red-500 rounded-md" onClick={() => setTopicDetailModal(false)}>X</button>
+                    <button className="border px-2 font-semibold text-sm text-white bg-red-700 hover:bg-red-500 rounded-md" onClick={() => { setIdTeacher(0); setTopicDetailModal(false);}}>X</button>
                 </div>
-                <div className="rounded-md shadow-md shadow-slate-400 p-5 mb-4">
-                    <div className=" grid grid-cols-8 text-center font-semibold">
+                <div className="rounded-md shadow-md shadow-slate-400 mx-5 mb-4">
+                    <div className=" grid grid-cols-12 text-center font-semibold">
                         <div>Mã đề tài</div>
-                        <div className="col-span-2">Tên đề tài</div>
-                        <div className="col-span-2">Tên tiếng Anh</div>
-                        <div>Sinh viên thực hiện</div>
+                        <div className="col-span-4">Tên đề tài</div>
+                        <div className="col-span-3">Tên tiếng Anh</div>
+                        <div className="col-span-2">Sinh viên thực hiện</div>
                         <div>Niên khóa</div>
                         <div>Học kỳ</div>
                     </div>
                     <hr className="border border-slate-300" />
-                    <div className=" grid grid-cols-8 text-center mt-2">
+                    <div className=" grid grid-cols-12 text-center mt-2">
                         {
-                            topic.map(e => (
+                            topicComplete?.map(e => (
                                 <React.Fragment key={e.id}>
-                                    <div>{e.code}</div>
-                                    <div className="col-span-2 mx-2">{e.name}</div>
-                                    <div className="col-span-2">{e.nameEnglish}</div>
-                                    <div>{e.sv}</div>
-                                    <div>{e.courses}</div>
-                                    <div>{e.semesterm}</div>
+                                    <div>{e.topic.code}</div>
+                                    <div className="col-span-4 mx-2">{e.topic.VietnameseName}</div>
+                                    <div className="col-span-3">{e.topic.EnglishName}</div>
+                                    <div className="col-span-2">{e.student.fullName}</div>
+                                    <div>{e.shoolYear.year}</div>
+                                    <div>{e.shoolYear.semester}</div>
                                 </React.Fragment>
                             ))
                         }
                     </div>
 
                 </div>
-                {/* <div className="grid grid-cols-2 mt-2">
-                                    <button className="mx-auto w-1/3 py-2 bg-gray-500 text-white rounded " onClick={() => setTopicDetailModal(false)}>Đóng</button>
-                                    <button className=" w-1/3 mx-auto py-2 bg-green-600 text-white rounded " onClick={() => { setTopicDetailModal(false); }}>Lưu lại</button>
-                                </div> */}
-
             </Modal>
         </div>
     );

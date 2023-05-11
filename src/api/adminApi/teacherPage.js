@@ -136,3 +136,16 @@ export const getAllTeacher = async (id, data) => {
         return (error);
     }
 }
+
+export const getAllTopicTutorial = async (id) => {
+    try {
+        const token = localStorage.getItem('token');
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        const res = await instance.get(`/teacher/getAllTopicTutorial/${id}`, { headers });
+        return res.data;
+    } catch (err) {
+        throw (err);
+    }
+}
